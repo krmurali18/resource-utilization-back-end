@@ -1,8 +1,6 @@
 package com.capacityplanning.resourceutilization.entity;
 
 import jakarta.persistence.*;
-import org.springframework.data.annotation.Id;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -12,7 +10,7 @@ import java.time.LocalDate;
 public class ProjectResourceMapping {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long mappingId ;
 
     @Column(name = "project_id", nullable = false)
     private Long projectId;
@@ -20,9 +18,12 @@ public class ProjectResourceMapping {
     @Column(name = "resource_id", nullable = false)
     private String resourceId;
 
-    @Column(name = "quantity_allocated", nullable = false)
-    private BigDecimal quantityAllocated;
+    @Column(name = "allocation_percentage", nullable = false)
+    private BigDecimal allocationPercentage;
 
-    @Column(name = "allocation_date", nullable = false)
-    private LocalDate allocationDate;
+    @Column(name = "start_date", nullable = false)
+    private LocalDate startDate;
+
+    @Column(name = "end_date", nullable = false)
+    private LocalDate endDate;
 }
