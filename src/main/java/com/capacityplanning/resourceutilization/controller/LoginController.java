@@ -7,6 +7,8 @@ import org.springframework.security.core.Authentication;
 public class LoginController {
     @GetMapping("/login")
     public String login(Authentication authentication) {
+        System.out.println("User" + authentication.getName()
+            + " has logged in");
         return "Welcome, " + authentication.getName();
     }
 }
