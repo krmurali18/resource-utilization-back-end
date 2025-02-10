@@ -21,5 +21,9 @@ public class GlobalResourceAllocationServiceImpl implements GlobalResourceAlloca
         return projectResourceMappingRepository.findAll().stream().map(ProjectResourceMappingDTO::new).collect(Collectors.toList());
     }
 
+    @Override
+    public ProjectResourceMappingDTO updateGlobalResourceAllocation(Long id, ProjectResourceMappingDTO projectResourceMappingDTO) {
+        return new ProjectResourceMappingDTO(projectResourceMappingRepository.save(projectResourceMappingDTO.toEntity()));
+    }
 
 }

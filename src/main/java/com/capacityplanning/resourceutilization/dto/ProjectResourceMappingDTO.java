@@ -83,4 +83,20 @@ public class ProjectResourceMappingDTO {
         this.endDate = projectResourceMappingEntity.getEndDate();
 
     }
+
+    public ProjectResourceMappingEntity toEntity() {
+
+        ProjectResourceMappingEntity entity = new ProjectResourceMappingEntity();
+
+        // map fields from DTO to entity
+        entity.setMappingId(this.mappingId);
+        entity.setProjectId(this.projectId);
+        entity.setResourceId(this.resourceId);
+        entity.setAllocationPercentage(this.allocationPercentage);
+        entity.setStartDate(this.startDate);
+        entity.setEndDate(this.endDate);
+        
+        return entity;
+
+    }
 }
