@@ -17,21 +17,24 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/global-resource-allocations")
-@Tag(name = "global_resource_allocation", description = "Global Resource Allocation API")
+@Tag(name = "global_resource_allocations", description = "Global Resource Allocation API")
 public class GlobalResourceAllocationController {
 
 
     @Autowired
     GlobalResourceAllocationService globalResourceAllocationService;
 
+
+
     @GetMapping("/")
-    @Operation(summary = "Get all global resource allocation", description = "Retrieve a list of all resource allocations")
+    @Operation(summary = "Get all global resource allocations", description = "Retrieve a list of all resource allocations")
     public ResponseEntity<List<ProjectResourceMappingDTO>> getGlobalResourceAllocations() {
         return ResponseEntity.ok(globalResourceAllocationService.getGlobalResourceAllocations());
     }
 
 
-    @PutMapping("/api/global-resource-allocations/{id}")
+    @PutMapping("/{id}")
+    @Operation(summary = "Update a global resource allocation", description = "Update a specific resource allocation by ID")
     public ResponseEntity<ProjectResourceMappingDTO> updateGlobalResourceAllocation(@PathVariable Long id, @RequestBody ProjectResourceMappingDTO projectResourceMappingDTO) {
         return ResponseEntity.ok(globalResourceAllocationService.updateGlobalResourceAllocation(id, projectResourceMappingDTO));
     }

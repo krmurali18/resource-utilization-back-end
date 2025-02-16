@@ -25,7 +25,11 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springdoc:springdoc-openapi-ui:1.6.9'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4'
+	implementation('org.springdoc:springdoc-openapi-ui:1.8.0') {
+		exclude group: 'org.springdoc', module: 'springdoc-openapi-common'
+	}
+	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'javax.persistence:javax.persistence-api:2.2'
 	implementation 'mysql:mysql-connector-java:8.0.28'
 	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
@@ -33,6 +37,7 @@ dependencies {
 	implementation 'org.springframework.data:spring-data-relational'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.session:spring-session-core'
+	implementation 'org.springframework:spring-web'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
