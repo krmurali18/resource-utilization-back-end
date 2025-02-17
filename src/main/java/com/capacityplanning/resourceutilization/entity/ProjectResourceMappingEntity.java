@@ -31,4 +31,12 @@ public class ProjectResourceMappingEntity {
 
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
+
+    @ManyToOne
+    @JoinColumn(name = "project_id", referencedColumnName = "project_id", insertable = false, updatable = false)
+    private ProjectInfoEntity projectInfoEntity;
+
+    @ManyToOne
+    @JoinColumn(name = "resource_id", referencedColumnName = "resource_id", insertable = false, updatable = false)
+    private ResourceInfoEntity resourceInfoEntity;
 }

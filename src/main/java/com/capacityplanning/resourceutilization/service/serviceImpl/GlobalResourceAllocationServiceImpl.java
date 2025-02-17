@@ -25,5 +25,4 @@ public class GlobalResourceAllocationServiceImpl implements GlobalResourceAlloca
     public ProjectResourceMappingDTO updateGlobalResourceAllocation(Long id, ProjectResourceMappingDTO projectResourceMappingDTO) {
         return new ProjectResourceMappingDTO(projectResourceMappingRepository.save(projectResourceMappingDTO.toEntity()));
     }
-
 }
