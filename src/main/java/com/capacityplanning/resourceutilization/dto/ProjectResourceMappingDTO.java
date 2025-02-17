@@ -23,6 +23,12 @@ public class ProjectResourceMappingDTO {
     @JsonProperty("project_id")
     private Integer projectId;
 
+    @JsonProperty("projectInfoEntity")
+    private ProjectInfoEntity projectInfoEntity;
+
+    @JsonProperty("resourceInfoEntity")
+    private ResourceInfoEntity resourceInfoEntity;
+
     @JsonProperty("resource_id")
     private Integer resourceId;
 
@@ -58,7 +64,8 @@ public class ProjectResourceMappingDTO {
 
         // map fields from DTO to entity
         entity.setMappingId(this.mappingId);
-        entity.setProjectId(this.getProjectId().intValue());
+        entity.setProjectInfoEntity(this.getProjectInfoEntity());
+        entity.setResourceInfoEntity(this.getResourceInfoEntity());
         entity.setResourceId(this.getResourceId().intValue());
         entity.setAllocationPercentage(this.allocationPercentage);
         entity.setStartDate(this.startDate);
