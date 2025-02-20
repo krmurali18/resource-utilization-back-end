@@ -7,10 +7,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import com.capacityplanning.resourceutilization.service.DataImportExportService;
 
+import java.io.ByteArrayInputStream;
+
 @RestController
 @RequestMapping("/api/data")
-public class DataImportExportController {
 
+public class DataImportExportController {
     @Autowired
     private DataImportExportService dataImportExportService;
 
@@ -25,9 +27,9 @@ public class DataImportExportController {
     }
 
     @GetMapping("/export")
-    public ResponseEntity<byte[]> exportData() {
+    public ResponseEntity<ByteArrayInputStream> exportData() {
         try {
-            byte[] data = dataImportExportService.exportData();
+            ByteArrayInputStream data = dataImportExportService.exportData();
             return ResponseEntity.ok()
                     .header("Content-Disposition", "attachment; filename=data.xlsx")
                     .body(data);

@@ -1,8 +1,7 @@
-package com.capacityplanning.resourceutilization.service.impl;
-
+package com.capacityplanning.resourceutilization.service.serviceImpl;
 import com.capacityplanning.resourceutilization.entity.ProjectInfoEntity;
 import com.capacityplanning.resourceutilization.repository.ProjectInfoRepository;
-import com.capacityplanning.resourceutilization.service.DataImportExport;
+import com.capacityplanning.resourceutilization.service.DataImportExportService;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +14,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Service
-public class DataImportExportServiceImpl implements DataImportExport {
-
+public class DataImportExportServiceImpl implements DataImportExportService{
     @Autowired
     private ProjectInfoRepository projectInfoRepository;
 
@@ -45,8 +43,9 @@ public class DataImportExportServiceImpl implements DataImportExport {
         int rowNum = 0;
         for (ProjectInfoEntity projectInfo : projectInfoList) {
             Row row = sheet.createRow(rowNum++);
-            row.createCell(0).setCellValue(projectInfo.getId());
-            row.createCell(1).setCellValue(projectInfo.getName());
+            System.out.println("Row created:"+ row);
+            //row.createCell(0).setCellValue(projectInfo.getId());
+            //row.createCell(1).setCellValue(projectInfo.getName());
             // Set other fields as needed
         }
 
