@@ -23,7 +23,7 @@ public class DataImportExportServiceImpl implements DataImportExportService{
         Workbook workbook = new XSSFWorkbook(file.getInputStream());
         Sheet sheet = workbook.getSheetAt(0);
         for (Row row : sheet) {
-            System.out.println(row.getCell(0).getNumericCellValue());
+            System.out.println(row.getCell(0));
             //ProjectInfoEntity projectInfo = new ProjectInfoEntity();
             //projectInfo.setId((long) row.getCell(0).getNumericCellValue());
             //projectInfo.setName(row.getCell(1).getStringCellValue());
