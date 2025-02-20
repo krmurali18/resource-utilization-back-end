@@ -1,0 +1,9 @@
+import org.springframework.web.multipart.MultipartFile;
+
+package com.capacityplanning.resourceutilization.service;
+
+
+public interface DataImportExportService {
+    void importData(MultipartFile file);
+    void exportData(String destination);
+}
