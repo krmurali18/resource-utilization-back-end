@@ -32,6 +32,9 @@ public class ProjectInfoEntity {
     @Column(name="description")
     private String description;
 
+    @Column(name="task")
+    private String task;
+
     @Column(name="created_at", nullable = false)
     private LocalDateTime createdAt;
 

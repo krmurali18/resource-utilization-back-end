@@ -15,6 +15,8 @@ public class ProjectInfoDTO {
     private String description;
     private String skill;
 
+    private String task;
+
 
     // Method to convert Entity to DTO
     public ProjectInfoDTO(ProjectInfoEntity entity) {
@@ -24,5 +26,6 @@ public class ProjectInfoDTO {
         this.startDate = entity.getStartDate();
         this.endDate = entity.getEndDate();
         this.description = entity.getDescription();
+        this.task = entity.getTask();
     }
 }

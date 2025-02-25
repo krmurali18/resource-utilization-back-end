@@ -17,8 +17,8 @@ public class ResourceInfoEntity {
     @Column(name = "resource_name", nullable = false)
     private String resourceName;
 
-    @Column(name = "skill", nullable = false)
-    private String skill;
+    @Column(name = "skills", nullable = false)
+    private String skills;
 
     @Column(name="company")
     private String company;

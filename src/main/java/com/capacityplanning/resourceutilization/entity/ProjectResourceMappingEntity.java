@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 
 @Entity
@@ -15,16 +16,14 @@ import java.time.LocalDate;
 public class ProjectResourceMappingEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long mappingId ;
+    @Column(name = "mapping_id")
+    private Long mappingId;
 
     @Column(name = "project_id", nullable = false)
     private Integer projectId;
 
     @Column(name = "resource_id", nullable = false)
     private Integer resourceId;
-
-    @Column(name = "allocation_percentage", nullable = false)
-    private BigDecimal allocationPercentage;
 
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
@@ -39,4 +38,7 @@ public class ProjectResourceMappingEntity {
     @ManyToOne
     @JoinColumn(name = "resource_id", referencedColumnName = "resource_id", insertable = false, updatable = false)
     private ResourceInfoEntity resourceInfoEntity;
+
+    @OneToMany(mappedBy = "projectResourceAllocation", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProjectResourceAllocationEntity> projectResourceAllocationList;
 }
