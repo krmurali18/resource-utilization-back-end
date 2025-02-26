@@ -47,11 +47,14 @@ public class ProjectResourceMappingDTO {
     @JsonProperty("end_date")
     private LocalDate endDate;
 
+    @JsonProperty("allocation_percentage")
+    private BigDecimal allocationPercentage;
+
     @JsonProperty("task")
     private String task;
 
-    @JsonProperty("projectResourceAllocation")
-    private List<ProjectResourceAllocationEntity> projectResourceAllocationEntity;
+    /*@JsonProperty("projectResourceAllocation")
+    private List<ProjectResourceAllocationEntity> projectResourceAllocationEntity;*/
 
 
 
@@ -65,7 +68,8 @@ public class ProjectResourceMappingDTO {
         this.startDate = projectResourceMappingEntity.getStartDate();
         this.endDate = projectResourceMappingEntity.getEndDate();
         this.task = projectResourceMappingEntity.getProjectInfoEntity().getTask();
-        this.projectResourceAllocationEntity = projectResourceMappingEntity.getProjectResourceAllocationList();
+        this.allocationPercentage = projectResourceMappingEntity.getAllocationPercentage();
+        //this.projectResourceAllocationEntity = projectResourceMappingEntity.getProjectResourceAllocationList();
 
     }
 

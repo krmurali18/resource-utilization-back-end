@@ -31,6 +31,9 @@ public class ProjectResourceMappingEntity {
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 
+    @Column(name = "allocation_percentage", nullable = false)
+    private BigDecimal allocationPercentage;
+
     @ManyToOne
     @JoinColumn(name = "project_id", referencedColumnName = "project_id", insertable = false, updatable = false)
     private ProjectInfoEntity projectInfoEntity;
