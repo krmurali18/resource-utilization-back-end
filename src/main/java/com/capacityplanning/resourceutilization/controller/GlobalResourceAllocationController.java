@@ -4,14 +4,10 @@ import com.capacityplanning.resourceutilization.dto.ProjectResourceMappingDTO;
 import com.capacityplanning.resourceutilization.service.GlobalResourceAllocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -43,5 +39,17 @@ public class GlobalResourceAllocationController {
     //   return globalResourceAllocationService.getGlobalResourceAllocations();
     //}
 
+    @PostMapping("/addResourceAllocation")
+    @Operation(summary = "Add a new global resource allocation", description = "Create a new resource allocation entry")
+    public ResponseEntity<String> addGlobalResourceAllocation(@RequestBody ProjectResourceMappingDTO projectResourceMappingDTO) {
+        System.out.println("projectResourceMappingDTO resource allocation:"+projectResourceMappingDTO.getStartDate());
+        System.out.println("projectResourceMappingDTO resource allocation:"+projectResourceMappingDTO.getAllocationPercentage());
+        boolean isAdded = globalResourceAllocationService.addGlobalResourceAllocation(projectResourceMappingDTO);
+        if (isAdded) {
+            return ResponseEntity.ok("Resource allocation added successfully");
+        } else {
+            return ResponseEntity.status(400).body("Failed to add resource allocation");
+        }
+    }
 
 }

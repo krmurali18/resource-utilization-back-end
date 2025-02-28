@@ -19,12 +19,6 @@ public class ProjectResourceMappingEntity {
     @Column(name = "mapping_id")
     private Long mappingId;
 
-    @Column(name = "project_id", nullable = false)
-    private Integer projectId;
-
-    @Column(name = "resource_id", nullable = false)
-    private Integer resourceId;
-
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
@@ -34,9 +28,18 @@ public class ProjectResourceMappingEntity {
     @Column(name = "allocation_percentage", nullable = false)
     private BigDecimal allocationPercentage;
 
+    @Column(name = "project_id", nullable = false)
+    private Integer projectId;
+
+    @Column(name = "source", nullable = false)
+    private String source;
+
     @ManyToOne
     @JoinColumn(name = "project_id", referencedColumnName = "project_id", insertable = false, updatable = false)
     private ProjectInfoEntity projectInfoEntity;
+
+    @Column(name = "resource_id", nullable = false)
+    private Integer resourceId;
 
     @ManyToOne
     @JoinColumn(name = "resource_id", referencedColumnName = "resource_id", insertable = false, updatable = false)

@@ -9,4 +9,7 @@ public interface GlobalResourceAllocationService {
 
     // write a method to update global resource allocation
     public ProjectResourceMappingDTO updateGlobalResourceAllocation(Long id, ProjectResourceMappingDTO projectResourceMappingDTO);
+
+    // write a method to add global resource allocation
+    public boolean addGlobalResourceAllocation(ProjectResourceMappingDTO projectResourceMappingDTO);
 }

@@ -57,6 +57,9 @@ public class ProjectResourceMappingDTO {
     private List<ProjectResourceAllocationEntity> projectResourceAllocationEntity;*/
 
 
+    public ProjectResourceMappingDTO(){
+
+    }
 
     public ProjectResourceMappingDTO(ProjectResourceMappingEntity projectResourceMappingEntity) {
         this.mappingId = projectResourceMappingEntity.getMappingId();
@@ -78,12 +81,14 @@ public class ProjectResourceMappingDTO {
         ProjectResourceMappingEntity entity = new ProjectResourceMappingEntity();
 
         // map fields from DTO to entity
-        entity.setMappingId(this.mappingId);
-        entity.setProjectInfoEntity(this.getProjectInfoEntity());
-        entity.setResourceInfoEntity(this.getResourceInfoEntity());
-        entity.setResourceId(this.getResourceId().intValue());
+        entity.setProjectId(this.getProjectInfoEntity().getProjectId());
+        entity.setResourceId(this.getResourceInfoEntity().getResourceId());
+        //entity.setProjectInfoEntity(this.getProjectInfoEntity());
+        //entity.setResourceInfoEntity(this.getResourceInfoEntity());
         entity.setStartDate(this.startDate);
         entity.setEndDate(this.endDate);
+        entity.setAllocationPercentage(this.allocationPercentage);
+        entity.setSource("INSERT");
 
         return entity;
 
