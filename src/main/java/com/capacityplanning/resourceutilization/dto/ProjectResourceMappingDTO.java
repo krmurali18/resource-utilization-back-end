@@ -53,6 +53,9 @@ public class ProjectResourceMappingDTO {
     @JsonProperty("task")
     private String task;
 
+    @JsonProperty("source")
+    private String source;
+
     /*@JsonProperty("projectResourceAllocation")
     private List<ProjectResourceAllocationEntity> projectResourceAllocationEntity;*/
 
@@ -72,6 +75,7 @@ public class ProjectResourceMappingDTO {
         this.endDate = projectResourceMappingEntity.getEndDate();
         this.task = projectResourceMappingEntity.getProjectInfoEntity().getTask();
         this.allocationPercentage = projectResourceMappingEntity.getAllocationPercentage();
+        this.source = projectResourceMappingEntity.getSource();
         //this.projectResourceAllocationEntity = projectResourceMappingEntity.getProjectResourceAllocationList();
 
     }
@@ -88,7 +92,9 @@ public class ProjectResourceMappingDTO {
         entity.setStartDate(this.startDate);
         entity.setEndDate(this.endDate);
         entity.setAllocationPercentage(this.allocationPercentage);
-        entity.setSource("INSERT");
+        entity.setSource(this.source);
+        entity.setCreatedBy("Murali");
+        entity.setUpdatedBy("Murali");
 
         return entity;
 

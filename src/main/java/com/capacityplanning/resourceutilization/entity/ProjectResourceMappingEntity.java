@@ -34,6 +34,12 @@ public class ProjectResourceMappingEntity {
     @Column(name = "source", nullable = false)
     private String source;
 
+    @Column(name = "created_by")
+    private String createdBy;
+
+    @Column(name = "updated_by")
+    private String updatedBy;
+
     @ManyToOne
     @JoinColumn(name = "project_id", referencedColumnName = "project_id", insertable = false, updatable = false)
     private ProjectInfoEntity projectInfoEntity;
