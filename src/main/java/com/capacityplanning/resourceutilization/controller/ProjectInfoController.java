@@ -28,7 +28,7 @@ public class ProjectInfoController {
        return ResponseEntity.ok(projectInfoService.getProjects());
     }
 
-    @PostMapping("/saveProject")
+    @PostMapping("/save-project")
     @Operation(summary = "Save project info", description = "Save project information into the database")
     public ResponseEntity<ProjectInfoDTO> saveProject(@RequestBody ProjectInfoDTO projectInfoDTO) {
         ProjectInfoDTO savedProject = projectInfoService.saveProject(projectInfoDTO);
