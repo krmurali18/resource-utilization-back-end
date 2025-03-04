@@ -17,6 +17,10 @@ public class ProjectInfoDTO {
 
     private String task;
 
+    public ProjectInfoDTO() {
+
+    }
+
 
     // Method to convert Entity to DTO
     public ProjectInfoDTO(ProjectInfoEntity entity) {
