@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ProjectInfoService {
     public List<ProjectInfoDTO> getProjects();
-    public ProjectInfoDTO saveProjectInfo(ProjectInfoDTO projectInfoDTO);
+    public ProjectInfoDTO saveProject(ProjectInfoDTO projectInfoDTO);
 }

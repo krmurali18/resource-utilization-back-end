@@ -22,7 +22,7 @@ public class ProjectInfoServiceImpl implements ProjectInfoService {
     }
 
     @Override
-    public ProjectInfoDTO saveProjectInfo(ProjectInfoDTO projectInfoDTO) {
+    public ProjectInfoDTO saveProject(ProjectInfoDTO projectInfoDTO) {
         ProjectInfoEntity projectInfoEntity = new ProjectInfoEntity();
         projectInfoEntity.setGroupName(projectInfoDTO.getGroupName());
         projectInfoEntity.setTask(projectInfoDTO.getTask());

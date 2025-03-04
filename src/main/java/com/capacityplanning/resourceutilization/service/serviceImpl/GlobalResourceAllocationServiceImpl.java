@@ -28,16 +28,18 @@ public class GlobalResourceAllocationServiceImpl implements GlobalResourceAlloca
     public ProjectResourceMappingEntity updateGlobalResourceAllocation(Long id, ProjectResourceMappingDTO projectResourceMappingDTO) {
 
         Optional<ProjectResourceMappingEntity> projectResourceMappingEntityOptional = projectResourceMappingRepository.findById(id);
+        ProjectResourceMappingEntity projectResourceMappingEntity = null;
         if (projectResourceMappingEntityOptional.isPresent()) {
-            ProjectResourceMappingEntity projectResourceMappingEntity = projectResourceMappingEntityOptional.get();
+            projectResourceMappingEntity = projectResourceMappingEntityOptional.get();
             projectResourceMappingEntity.setAllocationPercentage(projectResourceMappingDTO.getAllocationPercentage());
             projectResourceMappingEntity.setUpdatedBy("Murali");
             projectResourceMappingEntity.setResourceId(projectResourceMappingDTO.getResourceId());
-            return projectResourceMappingRepository.save(projectResourceMappingEntity);
-        } else {
-            // Handle the case where the entity is not found
-            throw new Exception("Entity with id " + id + " not found");
         }
+        return projectResourceMappingRepository.save(projectResourceMappingEntity);
+//        } else {
+//            // Handle the case where the entity is not found
+//            throw new Exception("Entity with id " + id + " not found");
+//        }
     }
 
     @Override
