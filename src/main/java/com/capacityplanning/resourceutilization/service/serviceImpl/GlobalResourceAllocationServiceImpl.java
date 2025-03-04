@@ -1,16 +1,19 @@
 package com.capacityplanning.resourceutilization.service.serviceImpl;
 
 import com.capacityplanning.resourceutilization.dto.ProjectResourceMappingDTO;
+import com.capacityplanning.resourceutilization.entity.ProjectResourceMappingEntity;
 import com.capacityplanning.resourceutilization.repository.ProjectResourceMappingRepository;
 import com.capacityplanning.resourceutilization.service.GlobalResourceAllocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
-
+import javax.transaction.Transactional;
 
 @Service
+@Transactional
 public class GlobalResourceAllocationServiceImpl implements GlobalResourceAllocationService {
 
     @Autowired
@@ -22,8 +25,19 @@ public class GlobalResourceAllocationServiceImpl implements GlobalResourceAlloca
     }
 
     @Override
-    public ProjectResourceMappingDTO updateGlobalResourceAllocation(Long id, ProjectResourceMappingDTO projectResourceMappingDTO) {
-        return new ProjectResourceMappingDTO(projectResourceMappingRepository.save(projectResourceMappingDTO.toEntity()));
+    public ProjectResourceMappingEntity updateGlobalResourceAllocation(Long id, ProjectResourceMappingDTO projectResourceMappingDTO) {
+
+        Optional<ProjectResourceMappingEntity> projectResourceMappingEntityOptional = projectResourceMappingRepository.findById(id);
+        if (projectResourceMappingEntityOptional.isPresent()) {
+            ProjectResourceMappingEntity projectResourceMappingEntity = projectResourceMappingEntityOptional.get();
+            projectResourceMappingEntity.setAllocationPercentage(projectResourceMappingDTO.getAllocationPercentage());
+            projectResourceMappingEntity.setUpdatedBy("Murali");
+            projectResourceMappingEntity.setResourceId(projectResourceMappingDTO.getResourceId());
+            return projectResourceMappingRepository.save(projectResourceMappingEntity);
+        } else {
+            // Handle the case where the entity is not found
+            throw new Exception("Entity with id " + id + " not found");
+        }
     }
 
     @Override
