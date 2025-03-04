@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/api/project-info")
@@ -24,6 +26,13 @@ public class ProjectInfoController {
     @Operation(summary = "Get all the active projects", description = "Retrieve a list of all available projects")
     public ResponseEntity<List<ProjectInfoDTO>> getProjects() {
        return ResponseEntity.ok(projectInfoService.getProjects());
+    }
+
+    @PostMapping("/saveProject")
+    @Operation(summary = "Save project info", description = "Save project information into the database")
+    public ResponseEntity<ProjectInfoDTO> saveProject(@RequestBody ProjectInfoDTO projectInfoDTO) {
+        ProjectInfoDTO savedProject = projectInfoService.saveProject(projectInfoDTO);
+        return ResponseEntity.ok(savedProject);
     }
 
 }
