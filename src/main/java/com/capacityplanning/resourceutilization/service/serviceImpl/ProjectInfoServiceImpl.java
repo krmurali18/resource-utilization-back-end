@@ -36,4 +36,18 @@ public class ProjectInfoServiceImpl implements ProjectInfoService {
         projectInfoEntity.setUpdatedBy("Murali");
         return new ProjectInfoDTO(projectInfoRepository.save(projectInfoEntity));
     }
+
+    @Override
+    public ProjectInfoDTO updateProject(Long id, ProjectInfoDTO projectInfoDTO) {
+        ProjectInfoEntity projectInfoEntity = projectInfoRepository.findById(id).get();
+        projectInfoEntity.setGroupName(projectInfoDTO.getGroupName());
+        projectInfoEntity.setTask(projectInfoDTO.getTask());
+        projectInfoEntity.setSkill(projectInfoDTO.getSkill());
+        projectInfoEntity.setStartDate(projectInfoDTO.getStartDate());
+        projectInfoEntity.setEndDate(projectInfoDTO.getEndDate());
+        projectInfoEntity.setDescription(projectInfoDTO.getDescription());
+        projectInfoEntity.setUpdatedAt(LocalDateTime.now());
+        projectInfoEntity.setUpdatedBy("Murali");
+        return new ProjectInfoDTO(projectInfoRepository.save(projectInfoEntity));
+    }
 }

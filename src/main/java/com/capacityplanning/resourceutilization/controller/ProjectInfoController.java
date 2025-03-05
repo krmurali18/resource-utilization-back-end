@@ -35,4 +35,11 @@ public class ProjectInfoController {
         return ResponseEntity.ok(savedProject);
     }
 
+    @PostMapping("/update-project/{id}")
+    @Operation(summary = "Update project info", description = "Update project information for a given ID")
+    public ResponseEntity<ProjectInfoDTO> updateProject(@PathVariable Long id, @RequestBody ProjectInfoDTO projectInfoDTO) {
+        ProjectInfoDTO updatedProject = projectInfoService.updateProject(id, projectInfoDTO);
+        return ResponseEntity.ok(updatedProject);
+    }
+
 }

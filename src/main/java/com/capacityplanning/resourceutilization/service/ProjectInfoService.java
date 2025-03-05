@@ -8,4 +8,5 @@ import java.util.List;
 public interface ProjectInfoService {
     public List<ProjectInfoDTO> getProjects();
     public ProjectInfoDTO saveProject(ProjectInfoDTO projectInfoDTO);
+    public ProjectInfoDTO updateProject(Long id, ProjectInfoDTO projectInfoDTO);
 }
