@@ -60,4 +60,12 @@ public class GlobalResourceAllocationController {
         }
     }
 
+    @GetMapping("/availableResources")
+    @Operation(summary = "Get available resources", description = "Retrieve a list of resources with allocation percentage more than or equal to 0.5 for a given date range")
+    public ResponseEntity<List<ProjectResourceMappingDTO>> getAvailableResources(
+        @RequestParam String startDate, @RequestParam String endDate) {
+        List<ProjectResourceMappingDTO> availableResources = globalResourceAllocationService.getAvailableResources(startDate, endDate);
+        return ResponseEntity.ok(availableResources);
+    }
+
 }

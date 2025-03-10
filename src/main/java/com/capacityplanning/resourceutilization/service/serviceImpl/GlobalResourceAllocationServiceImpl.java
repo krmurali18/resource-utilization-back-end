@@ -46,4 +46,12 @@ public class GlobalResourceAllocationServiceImpl implements GlobalResourceAlloca
     public boolean addGlobalResourceAllocation(ProjectResourceMappingDTO projectResourceMappingDTO) {
         return projectResourceMappingRepository.saveAndFlush(projectResourceMappingDTO.toEntity()) != null;
     }
+
+    @Override
+    public List<ProjectResourceMappingDTO> getAvailableResourcesForDateRange(String startDate, String endDate) {
+        return projectResourceMappingRepository.findByAllocationPercentageGreaterThanEqualAndDateRange(0.5, startDate, endDate)
+                .stream()
+                .map(ProjectResourceMappingDTO::new)
+                .collect(Collectors.toList());
+    }
 }
