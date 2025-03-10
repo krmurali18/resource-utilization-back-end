@@ -23,6 +23,7 @@ public class DataImportExportController {
     @Operation(summary = "Update the Service now Data for the project resource mapping", description = "Upload the project resource mapping data")
     public ResponseEntity<String> importData(@RequestParam("file") MultipartFile file) {
         try {
+            System.out.println("File name: " + file.getOriginalFilename());
             dataImportExportService.importData(file);
             return ResponseEntity.ok("Data imported successfully");
         } catch (Exception e) {
