@@ -14,4 +14,6 @@ public interface GlobalResourceAllocationService {
 
     // write a method to add global resource allocation
     public boolean addGlobalResourceAllocation(ProjectResourceMappingDTO projectResourceMappingDTO);
+
+    public List<ProjectResourceMappingDTO> getAvailableResources(String startDate, String endDate);
 }
