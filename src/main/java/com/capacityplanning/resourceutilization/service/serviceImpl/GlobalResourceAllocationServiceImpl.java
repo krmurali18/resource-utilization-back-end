@@ -49,7 +49,7 @@ public class GlobalResourceAllocationServiceImpl implements GlobalResourceAlloca
 
     @Override
     public List<ProjectResourceMappingDTO> getAvailableResourcesForDateRange(String startDate, String endDate) {
-        return projectResourceMappingRepository.findByAllocationPercentageGreaterThanEqualAndDateRange(0.5, startDate, endDate)
+        return projectResourceMappingRepository.findByAllocationPercentageGreaterThanEqualAndStartDateLessThanEqualAndEndDateGreaterThanEqual(0.5, startDate, endDate)
                 .stream()
                 .map(ProjectResourceMappingDTO::new)
                 .collect(Collectors.toList());
