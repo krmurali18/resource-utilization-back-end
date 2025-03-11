@@ -17,6 +17,9 @@ public class ProjectResourceAllocationEntity {
     @Column(name = "id")
     private Integer Id;
 
+    @Column(name = "mapping_id", nullable = false)
+    private Long mappingId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mapping_id", referencedColumnName = "mapping_id", insertable = false, updatable = false)
     @JsonIgnore

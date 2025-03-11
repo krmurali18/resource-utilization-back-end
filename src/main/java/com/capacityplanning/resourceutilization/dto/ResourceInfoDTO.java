@@ -13,8 +13,11 @@ public class ResourceInfoDTO {
     private String company;
 
 
+    public ResourceInfoDTO() {
+    }
+
     public ResourceInfoDTO(ResourceInfoEntity resourceInfoEntity) {
-        this.resourceId = resourceInfoEntity.getResourceId();
+        this.resourceId = resourceInfoEntity.getId();
         this.resourceName = resourceInfoEntity.getResourceName();
         this.skills = resourceInfoEntity.getSkills();
         this.company = resourceInfoEntity.getCompany();

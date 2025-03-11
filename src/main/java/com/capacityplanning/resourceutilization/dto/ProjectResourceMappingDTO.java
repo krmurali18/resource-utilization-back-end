@@ -68,7 +68,7 @@ public class ProjectResourceMappingDTO {
         this.mappingId = projectResourceMappingEntity.getMappingId();
         this.projectId = projectResourceMappingEntity.getProjectInfoEntity().getProjectId();
         this.groupName = projectResourceMappingEntity.getProjectInfoEntity().getGroupName();
-        this.resourceId = projectResourceMappingEntity.getResourceInfoEntity().getResourceId();
+        this.resourceId = projectResourceMappingEntity.getResourceInfoEntity().getId();
         this.resourceName = projectResourceMappingEntity.getResourceInfoEntity().getResourceName();
         this.description = projectResourceMappingEntity.getProjectInfoEntity().getDescription();
         this.startDate = projectResourceMappingEntity.getStartDate();
@@ -86,7 +86,7 @@ public class ProjectResourceMappingDTO {
 
         // map fields from DTO to entity
         entity.setProjectId(this.getProjectInfoEntity().getProjectId());
-        entity.setResourceId(this.getResourceInfoEntity().getResourceId());
+        entity.setResourceId(this.getResourceInfoEntity().getId());
         //entity.setProjectInfoEntity(this.getProjectInfoEntity());
         //entity.setResourceInfoEntity(this.getResourceInfoEntity());
         entity.setStartDate(this.startDate);

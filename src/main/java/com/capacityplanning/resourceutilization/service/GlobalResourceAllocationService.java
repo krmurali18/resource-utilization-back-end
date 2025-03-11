@@ -1,6 +1,7 @@
 package com.capacityplanning.resourceutilization.service;
 
 import com.capacityplanning.resourceutilization.dto.ProjectResourceMappingDTO;
+import com.capacityplanning.resourceutilization.dto.ResourceAvailabilityDTO;
 import com.capacityplanning.resourceutilization.entity.ProjectResourceMappingEntity;
 
 import java.util.List;
@@ -15,5 +16,5 @@ public interface GlobalResourceAllocationService {
     // write a method to add global resource allocation
     public boolean addGlobalResourceAllocation(ProjectResourceMappingDTO projectResourceMappingDTO);
 
-    public List<ProjectResourceMappingDTO> getAvailableResources(String startDate, String endDate);
+    public List<ResourceAvailabilityDTO> getAvailableResources(String startDate, String endDate);
 }

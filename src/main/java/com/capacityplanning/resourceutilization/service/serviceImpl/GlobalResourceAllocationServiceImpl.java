@@ -1,12 +1,17 @@
 package com.capacityplanning.resourceutilization.service.serviceImpl;
 
 import com.capacityplanning.resourceutilization.dto.ProjectResourceMappingDTO;
+import com.capacityplanning.resourceutilization.dto.ResourceAvailabilityDTO;
+import com.capacityplanning.resourceutilization.dto.ResourceInfoDTO;
 import com.capacityplanning.resourceutilization.entity.ProjectResourceMappingEntity;
+import com.capacityplanning.resourceutilization.entity.ResourceInfoEntity;
 import com.capacityplanning.resourceutilization.repository.ProjectResourceMappingRepository;
+import com.capacityplanning.resourceutilization.repository.ResourceInfoRepository;
 import com.capacityplanning.resourceutilization.service.GlobalResourceAllocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,6 +24,9 @@ public class GlobalResourceAllocationServiceImpl implements GlobalResourceAlloca
 
     @Autowired
     private ProjectResourceMappingRepository projectResourceMappingRepository;
+
+    @Autowired
+    private ResourceInfoRepository resourceInfoRepository;
 
     @Override
     public List<ProjectResourceMappingDTO> getGlobalResourceAllocations() {
@@ -49,12 +57,26 @@ public class GlobalResourceAllocationServiceImpl implements GlobalResourceAlloca
     }
 
     @Override
-    public List<ProjectResourceMappingDTO> getAvailableResources(String startDate, String endDate) {
+    public List<ResourceAvailabilityDTO> getAvailableResources(String startDate, String endDate) {
         LocalDate start = LocalDate.parse(startDate);
         LocalDate end = LocalDate.parse(endDate);
-        return projectResourceMappingRepository.findByAllocationPercentageGreaterThanEqualAndStartDateLessThanEqualAndEndDateGreaterThanEqual(0.5, start, end)
-            .stream()
-            .map(ProjectResourceMappingDTO::new)
-            .collect(Collectors.toList());
+        return projectResourceMappingRepository.findAvailableResourcesForDateRange(start, end);
+
+        // return projectResourceMappingRepository.findAvailableResourcesForDateRange(start, end)
+        //     .stream()
+        //     .map(resourceId -> {
+        //     ResourceInfoEntity resourceInfoEntity = resourceInfoRepository.findById(resourceId).orElseThrow(() -> new RuntimeException("Resource not found"));
+        //     return convertToResourceInfoDTO(resourceInfoEntity);
+        //     })
+        //     .collect(Collectors.toList());
+    }
+
+    private ResourceInfoDTO convertToResourceInfoDTO(ResourceInfoEntity resourceInfoEntity){
+
+        ResourceInfoDTO resourceInfoDTO = new ResourceInfoDTO();
+        resourceInfoDTO.setResourceId(resourceInfoEntity.getId());
+        resourceInfoDTO.setResourceName(resourceInfoEntity.getResourceName());
+        resourceInfoDTO.setSkills(resourceInfoEntity.getSkills());
+        return resourceInfoDTO;
     }
 }

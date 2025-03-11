@@ -12,7 +12,7 @@ public class ResourceInfoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "resource_id")
-    private Integer resourceId;
+    private Integer Id;
 
     @Column(name = "resource_name", nullable = false)
     private String resourceName;
