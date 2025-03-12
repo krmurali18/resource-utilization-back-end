@@ -23,4 +23,7 @@ public interface ProjectResourceMappingRepository extends JpaRepository<ProjectR
             "GROUP BY prm.resourceId " +
             "HAVING sum(prm.allocationPercentage) <= 0.5")
     public List<ResourceAvailabilityDTO> findAvailableResourcesForDateRange(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    @Query("SELECT prm FROM ProjectResourceMappingEntity prm WHERE prm.type = 'Requested'")
+    public List<ProjectResourceMappingEntity> findNewProjects();
 }

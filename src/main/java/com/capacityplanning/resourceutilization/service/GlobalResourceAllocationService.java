@@ -17,4 +17,7 @@ public interface GlobalResourceAllocationService {
     public boolean addGlobalResourceAllocation(ProjectResourceMappingDTO projectResourceMappingDTO);
 
     public List<ResourceAvailabilityDTO> getAvailableResources(String startDate, String endDate);
+
+    // write a method to get new projects
+    public List<ProjectResourceMappingDTO> getNewProjects();
 }

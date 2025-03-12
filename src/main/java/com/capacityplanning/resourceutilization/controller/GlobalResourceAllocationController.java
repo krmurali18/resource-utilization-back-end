@@ -44,9 +44,6 @@ public class GlobalResourceAllocationController {
 //        }
     }
 
-    // public List<ProjectResourceMappingDTO> getGlobalResourceAllocations() {
-    //   return globalResourceAllocationService.getGlobalResourceAllocations();
-    //}
 
     @PostMapping("/addResourceAllocation")
     @Operation(summary = "Add a new global resource allocation", description = "Create a new resource allocation entry")
@@ -67,6 +64,13 @@ public class GlobalResourceAllocationController {
             @RequestParam String startDate, @RequestParam String endDate) {
         List<ResourceAvailabilityDTO> availableResources = globalResourceAllocationService.getAvailableResources(startDate, endDate);
         return ResponseEntity.ok(availableResources);
+    }
+
+    @GetMapping("/getAllNewProjects")
+    @Operation(summary = "Get all new projects", description = "Retrieve a list of all projects with the type as Requestded")
+    public ResponseEntity<List<ProjectResourceMappingDTO>> getNewProjects() {
+        List<ProjectResourceMappingDTO> requestedProjects = globalResourceAllocationService.getNewProjects();
+        return ResponseEntity.ok(requestedProjects);
     }
 
 }

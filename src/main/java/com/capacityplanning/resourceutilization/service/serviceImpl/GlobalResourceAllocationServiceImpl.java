@@ -79,4 +79,10 @@ public class GlobalResourceAllocationServiceImpl implements GlobalResourceAlloca
         resourceInfoDTO.setSkills(resourceInfoEntity.getSkills());
         return resourceInfoDTO;
     }
+
+    @Override
+    public List<ProjectResourceMappingDTO> getNewProjects() {
+        return projectResourceMappingRepository.findNewProjects().stream().map(ProjectResourceMappingDTO::new).collect(Collectors.toList());
+    }
+
 }
