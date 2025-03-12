@@ -1,6 +1,7 @@
 package com.capacityplanning.resourceutilization.controller;
 
 import com.capacityplanning.resourceutilization.dto.ProjectInfoDTO;
+import com.capacityplanning.resourceutilization.dto.ProjectResourceMappingDTO;
 import com.capacityplanning.resourceutilization.service.GlobalResourceAllocationService;
 import com.capacityplanning.resourceutilization.service.ProjectInfoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,6 +42,13 @@ public class ProjectInfoController {
     public ResponseEntity<ProjectInfoDTO> updateProject(@PathVariable Long id, @RequestBody ProjectInfoDTO projectInfoDTO) {
         ProjectInfoDTO updatedProject = projectInfoService.updateProject(id, projectInfoDTO);
         return ResponseEntity.ok(updatedProject);
+    }
+
+    @GetMapping("/get-new-projects")
+    @Operation(summary = "Get all new projects", description = "Retrieve a list of all projects with the type as Requested")
+    public ResponseEntity<List<ProjectInfoDTO>> getNewProjects() {
+        List<ProjectInfoDTO> requestedProjects = projectInfoService.getNewProjects();
+        return ResponseEntity.ok(requestedProjects);
     }
 
 }

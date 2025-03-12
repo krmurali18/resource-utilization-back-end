@@ -57,10 +57,8 @@ public class GlobalResourceAllocationServiceImpl implements GlobalResourceAlloca
     }
 
     @Override
-    public List<ResourceAvailabilityDTO> getAvailableResources(String startDate, String endDate) {
-        LocalDate start = LocalDate.parse(startDate);
-        LocalDate end = LocalDate.parse(endDate);
-        return projectResourceMappingRepository.findAvailableResourcesForDateRange(start, end);
+    public List<ResourceAvailabilityDTO> getAvailableResources(LocalDate startDate, LocalDate endDate) {
+        return projectResourceMappingRepository.findAvailableResourcesForDateRange(startDate, endDate);
 
         // return projectResourceMappingRepository.findAvailableResourcesForDateRange(start, end)
         //     .stream()
@@ -78,11 +76,6 @@ public class GlobalResourceAllocationServiceImpl implements GlobalResourceAlloca
         resourceInfoDTO.setResourceName(resourceInfoEntity.getResourceName());
         resourceInfoDTO.setSkills(resourceInfoEntity.getSkills());
         return resourceInfoDTO;
-    }
-
-    @Override
-    public List<ProjectResourceMappingDTO> getNewProjects() {
-        return projectResourceMappingRepository.findNewProjects().stream().map(ProjectResourceMappingDTO::new).collect(Collectors.toList());
     }
 
 }

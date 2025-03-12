@@ -3,6 +3,8 @@ package com.capacityplanning.resourceutilization.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -46,5 +48,11 @@ public class ProjectInfoEntity {
 
     @Column(name="updated_by", nullable = false)
     private String updatedBy;
+
+    @Column(name="status", nullable = false)
+    private String status;
+
+    @Column(name = "required_allocation", nullable = false)
+    private BigDecimal requiredAllocation;
 
 }

@@ -1,7 +1,10 @@
 package com.capacityplanning.resourceutilization.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import com.capacityplanning.resourceutilization.entity.ProjectInfoEntity;
 
@@ -17,10 +20,13 @@ public class ProjectInfoDTO {
 
     private String task;
 
+    private String status;
+
+    private BigDecimal requiredAllocation;
+
     public ProjectInfoDTO() {
 
     }
-
 
     // Method to convert Entity to DTO
     public ProjectInfoDTO(ProjectInfoEntity entity) {
@@ -31,5 +37,7 @@ public class ProjectInfoDTO {
         this.endDate = entity.getEndDate();
         this.description = entity.getDescription();
         this.task = entity.getTask();
+        this.status = entity.getStatus();
+        this.requiredAllocation = entity.getRequiredAllocation();
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -58,19 +59,21 @@ public class GlobalResourceAllocationController {
         }
     }
 
+//    @GetMapping("/availableResources")
+//    @Operation(summary = "Get available resources", description = "Retrieve a list of resources with allocation percentage more than or equal to 0.5 for a given date range")
+//    public ResponseEntity<List<ResourceAvailabilityDTO>> getAvailableResources(
+//            @RequestParam String startDate, @RequestParam String endDate) {
+//        List<ResourceAvailabilityDTO> availableResources = globalResourceAllocationService.getAvailableResources(startDate, endDate);
+//        return ResponseEntity.ok(availableResources);
+//    }
+
     @GetMapping("/availableResources")
-    @Operation(summary = "Get available resources", description = "Retrieve a list of resources with allocation percentage more than or equal to 0.5 for a given date range")
-    public ResponseEntity<List<ResourceAvailabilityDTO>> getAvailableResources(
-            @RequestParam String startDate, @RequestParam String endDate) {
+    @Operation(summary = "Get available resources", description = "Retrieve a list of resources with allocation percentage less than or equal to 0.5 from today to one year period")
+    public ResponseEntity<List<ResourceAvailabilityDTO>> getAvailableResources() {
+        LocalDate startDate = LocalDate.now();
+        LocalDate endDate = startDate.plusYears(1);
         List<ResourceAvailabilityDTO> availableResources = globalResourceAllocationService.getAvailableResources(startDate, endDate);
         return ResponseEntity.ok(availableResources);
-    }
-
-    @GetMapping("/getAllNewProjects")
-    @Operation(summary = "Get all new projects", description = "Retrieve a list of all projects with the type as Requestded")
-    public ResponseEntity<List<ProjectResourceMappingDTO>> getNewProjects() {
-        List<ProjectResourceMappingDTO> requestedProjects = globalResourceAllocationService.getNewProjects();
-        return ResponseEntity.ok(requestedProjects);
     }
 
 }

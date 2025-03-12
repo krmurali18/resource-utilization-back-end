@@ -1,6 +1,7 @@
 package com.capacityplanning.resourceutilization.service.serviceImpl;
 
 import com.capacityplanning.resourceutilization.dto.ProjectInfoDTO;
+import com.capacityplanning.resourceutilization.dto.ProjectResourceMappingDTO;
 import com.capacityplanning.resourceutilization.entity.ProjectInfoEntity;
 import com.capacityplanning.resourceutilization.repository.ProjectInfoRepository;
 import com.capacityplanning.resourceutilization.service.ProjectInfoService;
@@ -49,5 +50,10 @@ public class ProjectInfoServiceImpl implements ProjectInfoService {
         projectInfoEntity.setUpdatedAt(LocalDateTime.now());
         projectInfoEntity.setUpdatedBy("Murali");
         return new ProjectInfoDTO(projectInfoRepository.save(projectInfoEntity));
+    }
+
+    @Override
+    public List<ProjectInfoDTO> getNewProjects() {
+        return projectInfoRepository.findNewProjects().stream().map(ProjectInfoDTO::new).collect(Collectors.toList());
     }
 }
