@@ -2,6 +2,7 @@ package com.capacityplanning.resourceutilization.controller;
 
 import com.capacityplanning.resourceutilization.dto.ProjectResourceMappingDTO;
 import com.capacityplanning.resourceutilization.dto.ResourceAvailabilityDTO;
+import com.capacityplanning.resourceutilization.dto.ResourceAvailabilityDetailDTO;
 import com.capacityplanning.resourceutilization.entity.ProjectResourceMappingEntity;
 import com.capacityplanning.resourceutilization.service.GlobalResourceAllocationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +75,16 @@ public class GlobalResourceAllocationController {
         LocalDate endDate = startDate.plusYears(1);
         List<ResourceAvailabilityDTO> availableResources = globalResourceAllocationService.getAvailableResources(startDate, endDate);
         return ResponseEntity.ok(availableResources);
+    }
+
+    @GetMapping("/monthlyResourceAllocation")
+    @Operation(summary = "Get monthly resource allocation", description = "Retrieve the month-wise split of available allocation percentage for each resource for a given time period")
+    public ResponseEntity<List<ResourceAvailabilityDetailDTO>> getMonthlyResourceAllocation(
+            @RequestParam String startDate, @RequestParam String endDate) {
+        LocalDate start = LocalDate.parse(startDate);
+        LocalDate end = LocalDate.parse(endDate);
+        List<ResourceAvailabilityDetailDTO> monthlyResourceAllocations = globalResourceAllocationService.getMonthlyResourceAllocation(start, end);
+        return ResponseEntity.ok(monthlyResourceAllocations);
     }
 
 }
