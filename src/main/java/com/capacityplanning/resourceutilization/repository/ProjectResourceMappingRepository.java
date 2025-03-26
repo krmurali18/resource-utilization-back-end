@@ -41,7 +41,8 @@ public interface ProjectResourceMappingRepository extends JpaRepository<ProjectR
 //    public List<ResourceAvailabilityDTO> findMonthlyResourceAvailability(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
     @Query(value = "SELECT pr.resource_id as resourceId, " +
-            "       DATE_FORMAT(m.month, '%Y-%m') as yearMonth, "+
+            "       ri.resource_name as resourceName, " +
+            "       DATE_FORMAT(m.month, '%Y-%m') as yearMonth, " +
             "       COALESCE(SUM(pr.allocation_percentage), 0) as total_allocation " +
             "FROM ( " +
             "    SELECT DATE_ADD(:startDate, INTERVAL (a.a + (10 * b.a) + (100 * c.a)) MONTH) as month " +
@@ -50,8 +51,9 @@ public interface ProjectResourceMappingRepository extends JpaRepository<ProjectR
             "    CROSS JOIN (SELECT 0 as a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) as c " +
             ") as m " +
             "LEFT JOIN project_resource_mapping pr ON m.month BETWEEN pr.start_date AND LAST_DAY(pr.end_date) " +
+            "LEFT JOIN resource_info ri ON pr.resource_id = ri.resource_id " +
             "WHERE m.month BETWEEN :startDate AND LAST_DAY(:endDate) " +
-            "GROUP BY pr.resource_id, yearMonth " +
+            "GROUP BY pr.resource_id, ri.resource_name, yearMonth " +
             "ORDER BY pr.resource_id, yearMonth", nativeQuery = true)
     List<ResourceAvailabilityDetailDTO> findMonthlyResourceAllocationTotals(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 }
