@@ -2,6 +2,8 @@ package com.capacityplanning.resourceutilization.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+@Getter
+@Setter
 public class AllocationDetailsDTO {
     private String month;
     private String year;
@@ -15,4 +17,6 @@ public class AllocationDetailsDTO {
         this.year = year;
         this.totalAllocation = totalAllocation;
     }
+
+
 }

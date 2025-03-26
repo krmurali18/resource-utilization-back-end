@@ -1,6 +1,7 @@
 package com.capacityplanning.resourceutilization.service;
 
 import com.capacityplanning.resourceutilization.dto.ProjectResourceMappingDTO;
+import com.capacityplanning.resourceutilization.dto.ResourceAllocationDetailDTO;
 import com.capacityplanning.resourceutilization.dto.ResourceAvailabilityDTO;
 import com.capacityplanning.resourceutilization.dto.ResourceAvailabilityDetailDTO;
 import com.capacityplanning.resourceutilization.entity.ProjectResourceMappingEntity;
@@ -20,5 +21,5 @@ public interface GlobalResourceAllocationService {
 
     public List<ResourceAvailabilityDTO> getAvailableResources(LocalDate startDate, LocalDate endDate);
 
-    public List<ResourceAvailabilityDetailDTO> getMonthlyResourceAllocation(LocalDate startDate, LocalDate endDate);
+    public List<ResourceAllocationDetailDTO> getMonthlyResourceAllocation(LocalDate startDate, LocalDate endDate);
 }

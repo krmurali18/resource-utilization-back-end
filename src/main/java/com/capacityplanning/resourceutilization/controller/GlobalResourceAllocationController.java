@@ -1,6 +1,7 @@
 package com.capacityplanning.resourceutilization.controller;
 
 import com.capacityplanning.resourceutilization.dto.ProjectResourceMappingDTO;
+import com.capacityplanning.resourceutilization.dto.ResourceAllocationDetailDTO;
 import com.capacityplanning.resourceutilization.dto.ResourceAvailabilityDTO;
 import com.capacityplanning.resourceutilization.dto.ResourceAvailabilityDetailDTO;
 import com.capacityplanning.resourceutilization.entity.ProjectResourceMappingEntity;
@@ -79,11 +80,11 @@ public class GlobalResourceAllocationController {
 
     @GetMapping("/monthlyResourceAllocation")
     @Operation(summary = "Get monthly resource allocation", description = "Retrieve the month-wise split of available allocation percentage for each resource for a given time period")
-    public ResponseEntity<List<ResourceAvailabilityDetailDTO>> getMonthlyResourceAllocation(
+    public ResponseEntity<List<ResourceAllocationDetailDTO>> getMonthlyResourceAllocation(
             @RequestParam String startDate, @RequestParam String endDate) {
         LocalDate start = LocalDate.parse(startDate);
         LocalDate end = LocalDate.parse(endDate);
-        List<ResourceAvailabilityDetailDTO> monthlyResourceAllocations = globalResourceAllocationService.getMonthlyResourceAllocation(start, end);
+        List<ResourceAllocationDetailDTO> monthlyResourceAllocations = globalResourceAllocationService.getMonthlyResourceAllocation(start, end);
         return ResponseEntity.ok(monthlyResourceAllocations);
     }
 

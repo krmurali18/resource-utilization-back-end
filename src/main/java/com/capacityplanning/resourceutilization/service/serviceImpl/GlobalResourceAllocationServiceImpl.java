@@ -1,9 +1,6 @@
 package com.capacityplanning.resourceutilization.service.serviceImpl;
 
-import com.capacityplanning.resourceutilization.dto.ProjectResourceMappingDTO;
-import com.capacityplanning.resourceutilization.dto.ResourceAvailabilityDTO;
-import com.capacityplanning.resourceutilization.dto.ResourceAvailabilityDetailDTO;
-import com.capacityplanning.resourceutilization.dto.ResourceInfoDTO;
+import com.capacityplanning.resourceutilization.dto.*;
 import com.capacityplanning.resourceutilization.entity.ProjectResourceMappingEntity;
 import com.capacityplanning.resourceutilization.entity.ResourceInfoEntity;
 import com.capacityplanning.resourceutilization.repository.ProjectResourceMappingRepository;
@@ -83,16 +80,17 @@ public class GlobalResourceAllocationServiceImpl implements GlobalResourceAlloca
     }
 
     @Override
-    public List<ResourceAvailabilityDetailDTO> getMonthlyResourceAllocation(LocalDate startDate, LocalDate endDate) {
+    public List<ResourceAllocationDetailDTO> getMonthlyResourceAllocation(LocalDate startDate, LocalDate endDate) {
         List<ResourceAvailabilityDetailDTO> monthlyResourceAllocations = projectResourceMappingRepository.findMonthlyResourceAllocationTotals(startDate, endDate);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
 
         // Initialize a list to hold the final results
         List<ResourceAvailabilityDetailDTO> finalAllocations = new ArrayList<>();
+        List<ResourceAllocationDetailDTO> resourceAllocatedDetailList = new ArrayList<>();
 
         // Iterate through each month in the date range
         List<ResourceInfoEntity> resourceInfoEntities = resourceInfoRepository.findAll();
-        startDate.datesUntil(endDate.plusMonths(1), java.time.Period.ofMonths(1)).forEach(date -> {
+        startDate.datesUntil(endDate.plusMonths(0), java.time.Period.ofMonths(1)).forEach(date -> {
             String month = date.format(formatter);
             //System.out.println("Month: " + month);
             List<ResourceAvailabilityDetailDTO> allocatedResourceIds = monthlyResourceAllocations.stream()
@@ -123,6 +121,51 @@ public class GlobalResourceAllocationServiceImpl implements GlobalResourceAlloca
                 return r1.getYearMonth().compareTo(r2.getYearMonth());
             });
         });
-        return finalAllocations;
+
+        startDate.datesUntil(endDate.plusMonths(0), java.time.Period.ofMonths(1)).forEach(date -> {
+            String month = date.format(formatter);
+            List<AllocationDetailsDTO> allocationDetailDTOLst = new ArrayList<>();
+
+            Map<Integer, List<ResourceAvailabilityDetailDTO>> groupedAllocations = finalAllocations.stream()
+                    .collect(Collectors.groupingBy(ResourceAvailabilityDetailDTO::getResourceId));
+
+            groupedAllocations.forEach((resourceId, allocations) -> {
+                ResourceAllocationDetailDTO resourceAllocationDetailDTO = new ResourceAllocationDetailDTO();
+                resourceAllocationDetailDTO.setResourceId(resourceId);
+                resourceAllocationDetailDTO.setResourceName(
+                        resourceInfoEntities.stream()
+                                .filter(resource -> resource.getId().equals(resourceId))
+                                .findFirst()
+                                .map(ResourceInfoEntity::getResourceName)
+                                .orElse("Unknown")
+                );
+
+                List<AllocationDetailsDTO> allocationDetailsDTOList = allocations.stream()
+                        .map(allocation -> {
+                            AllocationDetailsDTO allocationDetailsDTO = new AllocationDetailsDTO();
+                            allocationDetailsDTO.setMonth(java.time.Month.of(Integer.parseInt(allocation.getYearMonth().substring(5))).name().substring(0, 1).toUpperCase() + java.time.Month.of(Integer.parseInt(allocation.getYearMonth().substring(5))).name().substring(1).toLowerCase());
+                            allocationDetailsDTO.setYear(allocation.getYearMonth().substring(0, 4));
+                            allocationDetailsDTO.setTotalAllocation(allocation.getTotalAllocation());
+                            return allocationDetailsDTO;
+                        })
+                        .collect(Collectors.toList());
+
+                resourceAllocationDetailDTO.setAllocationDetailsDTOList(allocationDetailsDTOList);
+                resourceAllocatedDetailList.add(resourceAllocationDetailDTO);
+            });
+
+            resourceAllocatedDetailList.forEach(resource -> {
+                System.out.println("Resource ID: " + resource.getResourceId());
+                System.out.println("Resource Name: " + resource.getResourceName());
+                resource.getAllocationDetailsDTOList().forEach(allocation -> {
+                    System.out.println("Month: " + allocation.getMonth());
+                    System.out.println("Year: " + allocation.getYear());
+                    System.out.println("Total Allocation: " + allocation.getTotalAllocation());
+                });
+            });
+
+        });
+
+        return resourceAllocatedDetailList;
     }
 }
