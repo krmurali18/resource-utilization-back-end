@@ -47,6 +47,9 @@ public class ProjectResourceMappingEntity {
     @Column(name = "resource_id", nullable = false)
     private Integer resourceId;
 
+    @Column(name = "comments")
+    private String comments;
+
     @ManyToOne
     @JoinColumn(name = "resource_id", referencedColumnName = "resource_id", insertable = false, updatable = false)
     private ResourceInfoEntity resourceInfoEntity;
