@@ -3,13 +3,16 @@ package com.capacityplanning.resourceutilization.service.serviceImpl;
 import com.capacityplanning.resourceutilization.dto.*;
 import com.capacityplanning.resourceutilization.entity.ProjectResourceMappingEntity;
 import com.capacityplanning.resourceutilization.entity.ResourceInfoEntity;
+import com.capacityplanning.resourceutilization.entity.ResourceMappingExceptionsEntity;
 import com.capacityplanning.resourceutilization.repository.ProjectResourceMappingRepository;
 import com.capacityplanning.resourceutilization.repository.ResourceInfoRepository;
+import com.capacityplanning.resourceutilization.repository.ResourceMappingExceptionsRepository;
 import com.capacityplanning.resourceutilization.service.GlobalResourceAllocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +32,9 @@ public class GlobalResourceAllocationServiceImpl implements GlobalResourceAlloca
     @Autowired
     private ResourceInfoRepository resourceInfoRepository;
 
+    @Autowired
+    private ResourceMappingExceptionsRepository resourceMappingExceptionsRepository;
+
     @Override
     public List<ProjectResourceMappingDTO> getGlobalResourceAllocations() {
         return projectResourceMappingRepository.findAll().stream().map(ProjectResourceMappingDTO::new).collect(Collectors.toList());
@@ -42,19 +48,55 @@ public class GlobalResourceAllocationServiceImpl implements GlobalResourceAlloca
         if (projectResourceMappingEntityOptional.isPresent()) {
             projectResourceMappingEntity = projectResourceMappingEntityOptional.get();
             projectResourceMappingEntity.setAllocationPercentage(projectResourceMappingDTO.getAllocationPercentage());
+            projectResourceMappingEntity.setUpdatedAt(LocalDateTime.now());
             projectResourceMappingEntity.setUpdatedBy("Murali");
+            projectResourceMappingEntity.setSource(projectResourceMappingDTO.getSource());
             projectResourceMappingEntity.setResourceId(projectResourceMappingDTO.getResourceId());
         }
-        return projectResourceMappingRepository.save(projectResourceMappingEntity);
-//        } else {
-//            // Handle the case where the entity is not found
-//            throw new Exception("Entity with id " + id + " not found");
-//        }
+        projectResourceMappingEntity =  projectResourceMappingRepository.save(projectResourceMappingEntity);
+
+        if (projectResourceMappingEntity != null) {
+            // Assuming you have a ResourceMappingExceptionEntity and its repository
+            ResourceMappingExceptionsEntity exceptionEntity = new ResourceMappingExceptionsEntity();
+            exceptionEntity.setResourceId(projectResourceMappingEntity.getResourceId());
+            exceptionEntity.setProjectId(projectResourceMappingEntity.getProjectId());
+            exceptionEntity.setStartDate(projectResourceMappingEntity.getStartDate());
+            exceptionEntity.setEndDate(projectResourceMappingEntity.getEndDate());
+            exceptionEntity.setAllocationPercentage(projectResourceMappingEntity.getAllocationPercentage());
+            exceptionEntity.setUpdatedBy("Murali");
+            exceptionEntity.setSource(projectResourceMappingEntity.getSource());
+            exceptionEntity.setComments(projectResourceMappingEntity.getComments());
+            exceptionEntity.setCreatedBy("Murali");
+            resourceMappingExceptionsRepository.save(exceptionEntity);
+        } else {
+            throw new RuntimeException("Failed to update the resource allocation. Save operation returned null.");
+        }
+        return projectResourceMappingEntity;
     }
 
     @Override
     public boolean addGlobalResourceAllocation(ProjectResourceMappingDTO projectResourceMappingDTO) {
-        return projectResourceMappingRepository.saveAndFlush(projectResourceMappingDTO.toEntity()) != null;
+        ProjectResourceMappingEntity projectResourceMappingEntity = null;
+        boolean recordAdded = false;
+        projectResourceMappingEntity = projectResourceMappingRepository.save(projectResourceMappingDTO.toEntity());
+
+        if(projectResourceMappingEntity != null){
+            recordAdded = true;
+            ResourceMappingExceptionsEntity exceptionEntity = new ResourceMappingExceptionsEntity();
+            exceptionEntity.setMappingId(projectResourceMappingEntity.getMappingId());
+            exceptionEntity.setResourceId(projectResourceMappingEntity.getResourceId());
+            exceptionEntity.setProjectId(projectResourceMappingEntity.getProjectId());
+            exceptionEntity.setStartDate(projectResourceMappingEntity.getStartDate());
+            exceptionEntity.setEndDate(projectResourceMappingEntity.getEndDate());
+            exceptionEntity.setAllocationPercentage(projectResourceMappingEntity.getAllocationPercentage());
+            exceptionEntity.setUpdatedBy("Murali");
+            exceptionEntity.setSource(projectResourceMappingEntity.getSource());
+            exceptionEntity.setComments(projectResourceMappingEntity.getComments());
+            exceptionEntity.setCreatedBy("Murali");
+            resourceMappingExceptionsRepository.saveAndFlush(exceptionEntity);
+        }
+        System.out.println("recordAdded: " + recordAdded);
+        return recordAdded;
     }
 
     @Override
@@ -73,7 +115,7 @@ public class GlobalResourceAllocationServiceImpl implements GlobalResourceAlloca
     private ResourceInfoDTO convertToResourceInfoDTO(ResourceInfoEntity resourceInfoEntity){
 
         ResourceInfoDTO resourceInfoDTO = new ResourceInfoDTO();
-        resourceInfoDTO.setResourceId(resourceInfoEntity.getId());
+        resourceInfoDTO.setResourceId(resourceInfoEntity.getResourceId());
         resourceInfoDTO.setResourceName(resourceInfoEntity.getResourceName());
         resourceInfoDTO.setSkills(resourceInfoEntity.getSkills());
         return resourceInfoDTO;
@@ -99,11 +141,11 @@ public class GlobalResourceAllocationServiceImpl implements GlobalResourceAlloca
 
             List<ResourceAvailabilityDetailDTO> unallocatedResources = new ArrayList<>();
             resourceInfoEntities.forEach(resource -> {
-                if (allocatedResourceIds.stream().noneMatch(r -> r.getResourceId().equals(resource.getId()))) {
+                if (allocatedResourceIds.stream().noneMatch(r -> r.getResourceId().equals(resource.getResourceId()))) {
                     ResourceAvailabilityDetailDTO noAllocationResource = new ResourceAvailabilityDetailDTO();
                     noAllocationResource.setYearMonth(month);
                     noAllocationResource.setResourceName(resource.getResourceName());
-                    noAllocationResource.setResourceId(resource.getId());
+                    noAllocationResource.setResourceId(resource.getResourceId());
                     noAllocationResource.setTotalAllocation(0.0);
                     unallocatedResources.add(noAllocationResource);
                     //allocatedResourceIds.add(noAllocationResource);
@@ -134,7 +176,7 @@ public class GlobalResourceAllocationServiceImpl implements GlobalResourceAlloca
                 resourceAllocationDetailDTO.setResourceId(resourceId);
                 resourceAllocationDetailDTO.setResourceName(
                         resourceInfoEntities.stream()
-                                .filter(resource -> resource.getId().equals(resourceId))
+                                .filter(resource -> resource.getResourceId().equals(resourceId))
                                 .findFirst()
                                 .map(ResourceInfoEntity::getResourceName)
                                 .orElse("Unknown")

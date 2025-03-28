@@ -1,6 +1,7 @@
 package com.capacityplanning.resourceutilization.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,9 +14,13 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class ResourceMappingExceptionsEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "mapping_id")
+    @Column(name = "id")
+    private Integer Id;
+
+    @Column(name = "mapping_id", nullable = false)
     private Long mappingId;
 
     @Column(name = "start_date")
@@ -52,5 +57,10 @@ public class ResourceMappingExceptionsEntity {
     @ManyToOne
     @JoinColumn(name = "resource_id", referencedColumnName = "resource_id", insertable = false, updatable = false)
     private ResourceInfoEntity resourceInfoEntity;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mapping_id", referencedColumnName = "mapping_id", insertable = false, updatable = false)
+    @JsonIgnore
+    private ProjectResourceMappingEntity projectResourceAllocation;
 
 }

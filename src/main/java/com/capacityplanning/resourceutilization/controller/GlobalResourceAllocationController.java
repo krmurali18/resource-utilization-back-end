@@ -51,6 +51,8 @@ public class GlobalResourceAllocationController {
     @PostMapping("/addResourceAllocation")
     @Operation(summary = "Add a new global resource allocation", description = "Create a new resource allocation entry")
     public ResponseEntity<String> addGlobalResourceAllocation(@RequestBody ProjectResourceMappingDTO projectResourceMappingDTO) {
+        System.out.println("projectResourceMappingDTO project Id:"+projectResourceMappingDTO.getProjectInfoEntity().getProjectId());
+        System.out.println("projectResourceMappingDTO resourceId:"+projectResourceMappingDTO.getResourceInfoEntity().getResourceId());
         System.out.println("projectResourceMappingDTO resource allocation:"+projectResourceMappingDTO.getStartDate());
         System.out.println("projectResourceMappingDTO resource allocation:"+projectResourceMappingDTO.getAllocationPercentage());
         boolean isAdded = globalResourceAllocationService.addGlobalResourceAllocation(projectResourceMappingDTO);

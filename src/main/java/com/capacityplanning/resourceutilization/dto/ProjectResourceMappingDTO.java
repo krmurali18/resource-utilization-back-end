@@ -10,6 +10,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -56,6 +57,9 @@ public class ProjectResourceMappingDTO {
     @JsonProperty("source")
     private String source;
 
+    @JsonProperty("comments")
+    private String comments;
+
     /*@JsonProperty("projectResourceAllocation")
     private List<ProjectResourceAllocationEntity> projectResourceAllocationEntity;*/
 
@@ -66,9 +70,9 @@ public class ProjectResourceMappingDTO {
 
     public ProjectResourceMappingDTO(ProjectResourceMappingEntity projectResourceMappingEntity) {
         this.mappingId = projectResourceMappingEntity.getMappingId();
-        this.projectId = projectResourceMappingEntity.getProjectInfoEntity().getProjectId();
+        this.projectId = projectResourceMappingEntity.getProjectId();
         this.groupName = projectResourceMappingEntity.getProjectInfoEntity().getGroupName();
-        this.resourceId = projectResourceMappingEntity.getResourceInfoEntity().getId();
+        this.resourceId = projectResourceMappingEntity.getResourceInfoEntity().getResourceId();
         this.resourceName = projectResourceMappingEntity.getResourceInfoEntity().getResourceName();
         this.description = projectResourceMappingEntity.getProjectInfoEntity().getDescription();
         this.startDate = projectResourceMappingEntity.getStartDate();
@@ -76,6 +80,7 @@ public class ProjectResourceMappingDTO {
         this.task = projectResourceMappingEntity.getProjectInfoEntity().getTask();
         this.allocationPercentage = projectResourceMappingEntity.getAllocationPercentage();
         this.source = projectResourceMappingEntity.getSource();
+        this.comments = projectResourceMappingEntity.getComments();
         //this.projectResourceAllocationEntity = projectResourceMappingEntity.getProjectResourceAllocationList();
 
     }
@@ -85,16 +90,19 @@ public class ProjectResourceMappingDTO {
         ProjectResourceMappingEntity entity = new ProjectResourceMappingEntity();
 
         // map fields from DTO to entity
-        entity.setProjectId(this.getProjectInfoEntity().getProjectId());
-        entity.setResourceId(this.getResourceInfoEntity().getId());
+        entity.setProjectId(this.projectInfoEntity.getProjectId());
+        entity.setResourceId(this.resourceInfoEntity.getResourceId());
         //entity.setProjectInfoEntity(this.getProjectInfoEntity());
         //entity.setResourceInfoEntity(this.getResourceInfoEntity());
         entity.setStartDate(this.startDate);
         entity.setEndDate(this.endDate);
         entity.setAllocationPercentage(this.allocationPercentage);
         entity.setSource(this.source);
+        entity.setCreatedAt(LocalDateTime.now());
         entity.setCreatedBy("Murali");
+        entity.setUpdatedAt(LocalDateTime.now());
         entity.setUpdatedBy("Murali");
+        entity.setComments(this.comments);
 
         return entity;
 
