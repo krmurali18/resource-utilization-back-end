@@ -92,10 +92,12 @@ public class GlobalResourceAllocationServiceImpl implements GlobalResourceAlloca
             exceptionEntity.setStartDate(projectResourceMappingEntity.getStartDate());
             exceptionEntity.setEndDate(projectResourceMappingEntity.getEndDate());
             exceptionEntity.setAllocationPercentage(projectResourceMappingEntity.getAllocationPercentage());
+            exceptionEntity.setUpdatedAt(LocalDateTime.now());
             exceptionEntity.setUpdatedBy("Murali");
             exceptionEntity.setSource(projectResourceMappingEntity.getSource());
             exceptionEntity.setComments(projectResourceMappingEntity.getComments());
             exceptionEntity.setCreatedBy("Murali");
+            exceptionEntity.setCreatedAt(LocalDateTime.now());
             resourceMappingExceptionsRepository.saveAndFlush(exceptionEntity);
         }
         System.out.println("recordAdded: " + recordAdded);
