@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "resource_mapping_exceptions")
@@ -43,6 +44,12 @@ public class ResourceMappingExceptionsEntity {
 
     @Column(name = "updated_by")
     private String updatedBy;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     @Column(name = "comments")
     private String comments;
