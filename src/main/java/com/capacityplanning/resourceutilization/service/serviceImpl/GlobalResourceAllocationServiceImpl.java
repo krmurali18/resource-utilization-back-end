@@ -58,14 +58,17 @@ public class GlobalResourceAllocationServiceImpl implements GlobalResourceAlloca
         if (projectResourceMappingEntity != null) {
             // Assuming you have a ResourceMappingExceptionEntity and its repository
             ResourceMappingExceptionsEntity exceptionEntity = new ResourceMappingExceptionsEntity();
+            exceptionEntity.setMappingId(projectResourceMappingEntity.getMappingId());
             exceptionEntity.setResourceId(projectResourceMappingEntity.getResourceId());
             exceptionEntity.setProjectId(projectResourceMappingEntity.getProjectId());
             exceptionEntity.setStartDate(projectResourceMappingEntity.getStartDate());
             exceptionEntity.setEndDate(projectResourceMappingEntity.getEndDate());
             exceptionEntity.setAllocationPercentage(projectResourceMappingEntity.getAllocationPercentage());
+            exceptionEntity.setUpdatedAt(LocalDateTime.now());
             exceptionEntity.setUpdatedBy("Murali");
             exceptionEntity.setSource(projectResourceMappingEntity.getSource());
             exceptionEntity.setComments(projectResourceMappingEntity.getComments());
+            exceptionEntity.setCreatedAt(LocalDateTime.now());
             exceptionEntity.setCreatedBy("Murali");
             resourceMappingExceptionsRepository.save(exceptionEntity);
         } else {

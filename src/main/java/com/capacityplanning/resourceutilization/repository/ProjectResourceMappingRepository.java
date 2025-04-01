@@ -56,4 +56,7 @@ public interface ProjectResourceMappingRepository extends JpaRepository<ProjectR
             "GROUP BY pr.resource_id, ri.resource_name, yearMonth " +
             "ORDER BY pr.resource_id, yearMonth", nativeQuery = true)
     List<ResourceAvailabilityDetailDTO> findMonthlyResourceAllocationTotals(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    @Query("SELECT prm FROM ProjectResourceMappingEntity prm WHERE prm.mappingId = :mappingId")
+    ProjectResourceMappingEntity findByMappingId(@Param("mappingId") Long mappingId);
 }
