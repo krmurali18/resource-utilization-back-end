@@ -51,4 +51,11 @@ public class ProjectInfoController {
         return ResponseEntity.ok(requestedProjects);
     }
 
+    @PostMapping("/update-project-status/{projectId}")
+    @Operation(summary = "Update project status", description = "Update the status of a project based on the project ID")
+    public ResponseEntity<ProjectInfoDTO> updateProjectStatus(@PathVariable Long projectId, @RequestParam String status) {
+        ProjectInfoDTO updatedProject = projectInfoService.updateProjectStatus(projectId, status);
+        return ResponseEntity.ok(updatedProject);
+    }
+
 }

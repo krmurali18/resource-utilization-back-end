@@ -11,4 +11,5 @@ public interface ProjectInfoService {
     public ProjectInfoDTO updateProject(Long id, ProjectInfoDTO projectInfoDTO);
 
     public List<ProjectInfoDTO> getNewProjects();
+    public ProjectInfoDTO updateProjectStatus(Long id, String status);
 }
