@@ -17,7 +17,7 @@ public interface GlobalResourceAllocationService {
     public ProjectResourceMappingEntity updateGlobalResourceAllocation(Long id, ProjectResourceMappingDTO projectResourceMappingDTO);
 
     // write a method to add global resource allocation
-    public boolean addGlobalResourceAllocation(ProjectResourceMappingDTO projectResourceMappingDTO);
+    public ProjectResourceMappingEntity addGlobalResourceAllocation(ProjectResourceMappingDTO projectResourceMappingDTO);
 
     public List<ResourceAvailabilityDTO> getAvailableResources(LocalDate startDate, LocalDate endDate);
 

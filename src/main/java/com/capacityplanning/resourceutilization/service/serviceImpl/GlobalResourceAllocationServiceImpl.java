@@ -78,13 +78,13 @@ public class GlobalResourceAllocationServiceImpl implements GlobalResourceAlloca
     }
 
     @Override
-    public boolean addGlobalResourceAllocation(ProjectResourceMappingDTO projectResourceMappingDTO) {
+    public ProjectResourceMappingEntity addGlobalResourceAllocation(ProjectResourceMappingDTO projectResourceMappingDTO) {
         ProjectResourceMappingEntity projectResourceMappingEntity = null;
-        boolean recordAdded = false;
+        //boolean recordAdded = false;
         projectResourceMappingEntity = projectResourceMappingRepository.save(projectResourceMappingDTO.toEntity());
 
         if(projectResourceMappingEntity != null){
-            recordAdded = true;
+            //recordAdded = true;
             ResourceMappingExceptionsEntity exceptionEntity = new ResourceMappingExceptionsEntity();
             exceptionEntity.setMappingId(projectResourceMappingEntity.getMappingId());
             exceptionEntity.setResourceId(projectResourceMappingEntity.getResourceId());
@@ -100,8 +100,8 @@ public class GlobalResourceAllocationServiceImpl implements GlobalResourceAlloca
             exceptionEntity.setCreatedAt(LocalDateTime.now());
             resourceMappingExceptionsRepository.saveAndFlush(exceptionEntity);
         }
-        System.out.println("recordAdded: " + recordAdded);
-        return recordAdded;
+        //System.out.println("recordAdded: " + recordAdded);
+        return projectResourceMappingEntity;
     }
 
     @Override
