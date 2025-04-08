@@ -60,6 +60,14 @@ public class ProjectInfoServiceImpl implements ProjectInfoService {
     @Override
     public ProjectInfoDTO updateProjectStatus(Long id, String status) {
         ProjectInfoEntity projectInfoEntity = projectInfoRepository.findById(id).orElseThrow(() -> new RuntimeException("Project not found"));
+        System.out.println("Group Name: " + projectInfoEntity.getGroupName());
+        projectInfoEntity.setGroupName(projectInfoEntity.getGroupName());
+        projectInfoEntity.setTask(projectInfoEntity.getTask());
+        projectInfoEntity.setSkill(projectInfoEntity.getSkill());
+        projectInfoEntity.setStartDate(projectInfoEntity.getStartDate());
+        projectInfoEntity.setEndDate(projectInfoEntity.getEndDate());
+        projectInfoEntity.setDescription(projectInfoEntity.getDescription());
+        projectInfoEntity.setRequiredAllocation(projectInfoEntity.getRequiredAllocation());
         projectInfoEntity.setStatus(status);
         projectInfoEntity.setUpdatedAt(LocalDateTime.now());
         projectInfoEntity.setUpdatedBy("Murali");
