@@ -56,4 +56,13 @@ public class ProjectInfoServiceImpl implements ProjectInfoService {
     public List<ProjectInfoDTO> getNewProjects() {
         return projectInfoRepository.findNewProjects().stream().map(ProjectInfoDTO::new).collect(Collectors.toList());
     }
+
+    @Override
+    public ProjectInfoDTO updateProjectStatus(Long id, String status) {
+        ProjectInfoEntity projectInfoEntity = projectInfoRepository.findById(id).orElseThrow(() -> new RuntimeException("Project not found"));
+        projectInfoEntity.setStatus(status);
+        projectInfoEntity.setUpdatedAt(LocalDateTime.now());
+        projectInfoEntity.setUpdatedBy("Murali");
+        return new ProjectInfoDTO(projectInfoRepository.save(projectInfoEntity));
+    }
 }
