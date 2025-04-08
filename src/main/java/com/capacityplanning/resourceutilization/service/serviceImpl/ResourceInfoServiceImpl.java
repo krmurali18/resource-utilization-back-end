@@ -18,4 +18,11 @@ public class ResourceInfoServiceImpl implements ResourceInfoService {
     public List<ResourceInfoDTO> getResources() {
         return resourceInfoRepository.findAll().stream().map(ResourceInfoDTO::new).collect(Collectors.toList());
     }
+
+    @Override
+    public ResourceInfoDTO getResourceById(Long id) {
+        return resourceInfoRepository.findById(id)
+                .map(ResourceInfoDTO::new)
+                .orElseThrow(() -> new RuntimeException("Resource not found with id: " + id));
+    }
 }

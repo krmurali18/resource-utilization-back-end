@@ -24,4 +24,10 @@ public class ResourceInfoController {
        return resourceInfoService.getResources();
     }
 
+    @GetMapping("/{id}")
+    @Operation(summary = "Get Resource by ID", description = "Retrieve resource information by its ID")
+    public ResourceInfoDTO getResourceById(@PathVariable Long id) {
+      return resourceInfoService.getResourceById(id);
+    }
+
 }
