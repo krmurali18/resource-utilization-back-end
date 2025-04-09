@@ -25,8 +25,11 @@ public class ResourceMappingExceptionServiceImpl implements ResourceMappingExcep
 
     @Override
     public List<ResourceMappingExceptionDTO> getMostRecentExceptions() {
+//        List<ResourceMappingExceptionsEntity> exceptions = resourceMappingExceptionsRepository.findAll().stream()
+//                .filter(exception -> Arrays.asList("INSERT", "UPDATE", "ALLOCATED").contains(exception.getSource()))
+//                .collect(Collectors.toList());
+
         List<ResourceMappingExceptionsEntity> exceptions = resourceMappingExceptionsRepository.findAll().stream()
-                .filter(exception -> Arrays.asList("INSERT", "UPDATE", "ALLOCATED").contains(exception.getSource()))
                 .collect(Collectors.toList());
 
         Map<String, ResourceMappingExceptionsEntity> mostRecentExceptions = new HashMap<>();
@@ -40,19 +43,17 @@ public class ResourceMappingExceptionServiceImpl implements ResourceMappingExcep
         }
 
         mostRecentExceptions.entrySet().removeIf(entry -> {
+            ProjectResourceMappingEntity projectResourceMappingEntity = null;
             Long mappingId = entry.getValue().getMappingId();
 
-            ProjectResourceMappingEntity projectResourceMappingEntity = projectResourceMappingRepository.findByMappingId(mappingId);
-            return projectResourceMappingEntity != null &&
-                    projectResourceMappingEntity.getSource().equals(entry.getValue().getSource());
+            projectResourceMappingEntity = projectResourceMappingRepository.findByMappingId(mappingId);
+            return ((projectResourceMappingEntity != null) &&
+                    (projectResourceMappingEntity.getSource().equals(entry.getValue().getSource())));
         });
 
 
         return mostRecentExceptions.values().stream()
                 .map(exception -> new ResourceMappingExceptionDTO(exception))
                 .collect(Collectors.toList());
-        // return resourceMappingExceptionsRepository.findAll().stream()
-        //     .filter(exception -> Arrays.asList("INSERT", "UPDATE", "ALLOCATED").contains(exception.getSource()))
-        //     .collect(Collectors.toList());
     }
 }

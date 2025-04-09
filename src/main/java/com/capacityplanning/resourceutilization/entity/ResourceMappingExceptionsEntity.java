@@ -65,9 +65,4 @@ public class ResourceMappingExceptionsEntity {
     @JoinColumn(name = "resource_id", referencedColumnName = "resource_id", insertable = false, updatable = false)
     private ResourceInfoEntity resourceInfoEntity;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "mapping_id", referencedColumnName = "mapping_id", insertable = false, updatable = false)
-    @JsonIgnore
-    private ProjectResourceMappingEntity projectResourceAllocation;
-
 }
