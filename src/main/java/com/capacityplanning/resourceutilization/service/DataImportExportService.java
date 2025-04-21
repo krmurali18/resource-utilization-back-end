@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 public interface DataImportExportService {
-    public String importData(MultipartFile file) throws IOException;
+    public String importGlobalResourceAllocation(MultipartFile file) throws IOException;
+    public String importNewDemand(MultipartFile file) throws IOException;
     public ByteArrayInputStream exportData() throws IOException;
 }

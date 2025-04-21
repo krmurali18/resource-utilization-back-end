@@ -22,15 +22,27 @@ public class DataImportExportController {
     @Autowired
     private DataImportExportService dataImportExportService;
 
-    @PostMapping(value = "/import",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/import-global-resource-allocation",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Update the Service now Data for the project resource mapping", description = "Upload the project resource mapping data")
-    public ResponseEntity<String> importData(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> importGlobalResourceAllocation(@RequestParam("file") MultipartFile file) {
         try {
             System.out.println("File name: " + file.getOriginalFilename());
-            dataImportExportService.importData(file);
+            dataImportExportService.importGlobalResourceAllocation(file);
             return ResponseEntity.ok("Data imported successfully");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to import data: " + e.getMessage());
+        }
+    }
+
+    @PostMapping(value = "/import-new-demand", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Import new demand for projects", description = "Upload the new demand data for projects")
+    public ResponseEntity<String> importNewDemand(@RequestParam("file") MultipartFile file) {
+        try {
+            System.out.println("File name: " + file.getOriginalFilename());
+            dataImportExportService.importNewDemand(file);
+            return ResponseEntity.ok("New demand imported successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to import new demand: " + e.getMessage());
         }
     }
 

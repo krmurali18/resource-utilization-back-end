@@ -38,7 +38,7 @@ public class DataImportExportServiceImpl implements DataImportExportService{
     private ProjectResourceMappingRepository projectResourceMappingRepository;
 
     @Override
-    public String importData(MultipartFile file) throws IOException {
+    public String importGlobalResourceAllocation(MultipartFile file) throws IOException {
         Workbook workbook = new XSSFWorkbook(file.getInputStream());
         Sheet sheet = workbook.getSheetAt(0);
         boolean isHeader = true;
@@ -250,6 +250,61 @@ public class DataImportExportServiceImpl implements DataImportExportService{
             }
         });
     }
+
+    @Override
+    public String importNewDemand(MultipartFile file) throws IOException {
+        Workbook workbook = new XSSFWorkbook(file.getInputStream());
+        Sheet sheet = workbook.getSheetAt(0);
+        boolean isHeader = true;
+        List<ProjectInfoEntity> newDemandList = new ArrayList<>();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        try {
+            for (Row row : sheet) {
+                if (isHeader) {
+                    isHeader = false;
+                    continue; // Skip the header row
+                }
+
+                ProjectInfoEntity newDemand = new ProjectInfoEntity();
+                newDemand.setRequiredAllocation(BigDecimal.valueOf(row.getCell(1).getNumericCellValue())); 
+                newDemand.setDescription(row.getCell(3).getStringCellValue()); 
+                newDemand.setTask(row.getCell(4).getStringCellValue());
+                newDemand.setDemandManager(row.getCell(6).getStringCellValue()); 
+                newDemand.setProjectManager(row.getCell(8).getStringCellValue()); 
+                newDemand.setGroupName(row.getCell(9).getStringCellValue());                 
+                newDemand.setStatus(row.getCell(10).getStringCellValue()); // Assuming status is in the 5th column
+                
+                Cell startDateCell = row.getCell(12); // Assuming start date is in the 6th column
+                if (startDateCell != null && startDateCell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(startDateCell)) {
+                    newDemand.setStartDate(startDateCell.getLocalDateTimeCellValue().toLocalDate());
+                }
+
+                Cell endDateCell = row.getCell(13); // Assuming end date is in the 7th column
+                if (endDateCell != null && endDateCell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(endDateCell)) {
+                    newDemand.setEndDate(endDateCell.getLocalDateTimeCellValue().toLocalDate());
+                }
+
+                newDemand.setCreatedBy("System");
+                newDemand.setCreatedAt(LocalDateTime.now());
+                newDemand.setUpdatedBy("System");
+                newDemand.setUpdatedAt(LocalDateTime.now());
+                
+
+                newDemandList.add(newDemand);
+            }
+
+            projectInfoRepository.saveAll(newDemandList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error occurred while importing new demand: " + e.getMessage();
+        } finally {
+            workbook.close();
+        }
+
+        return "New demand imported successfully";
+    }
+
     @Override
     public ByteArrayInputStream exportData() throws IOException {
         List<ProjectInfoEntity> projectInfoList = projectInfoRepository.findAll();

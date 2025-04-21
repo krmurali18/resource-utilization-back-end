@@ -8,5 +8,6 @@ import java.util.List;
 public interface ResourceInfoService {
     public List<ResourceInfoDTO> getResources();
     public ResourceInfoDTO getResourceById(Long resourceId);
+    public ResourceInfoDTO saveResource(ResourceInfoDTO resourceInfoDTO);
 }
 
