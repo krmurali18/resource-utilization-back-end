@@ -66,7 +66,7 @@ public class DataImportExportServiceImpl implements DataImportExportService{
                 resourceAllocationImportDTO.setFte(row.getCell(4).getNumericCellValue()); // Assuming FTE is in the 7th column
                 resourceAllocationImportDTO.setShortDescription(row.getCell(5).getStringCellValue()); // Assuming short description is in the 8th column
                 resourceAllocationImportDTO.setCountry(row.getCell(6).getStringCellValue()); // Assuming country is in the 9th column
-                resourceAllocationImportDTO.setEmployementType(row.getCell(8).getStringCellValue()); // Assuming employment type is in the 10th column
+                resourceAllocationImportDTO.setEmploymentType(row.getCell(8).getStringCellValue()); // Assuming employment type is in the 10th column
                 resourceAllocationImportDTO.setState(row.getCell(9).getStringCellValue()); // Assuming state is in the 11th column
                 if (startDateCell != null && startDateCell.getCellType() == CellType.NUMERIC) {
                     if (DateUtil.isCellDateFormatted(startDateCell)) {
@@ -129,7 +129,7 @@ public class DataImportExportServiceImpl implements DataImportExportService{
             globalResourceAllocationDTO.setFte(resourceAllocationImportDTO.getFte());
             globalResourceAllocationDTO.setShortDescription(resourceAllocationImportDTO.getShortDescription());
             globalResourceAllocationDTO.setCountry(resourceAllocationImportDTO.getCountry());
-            globalResourceAllocationDTO.setEmployementType(resourceAllocationImportDTO.getEmployementType());
+            globalResourceAllocationDTO.setEmployementType(resourceAllocationImportDTO.getEmploymentType());
             globalResourceAllocationDTO.setState(resourceAllocationImportDTO.getState());
             globalResourceAllocationDTO.setStartDate(resourceAllocationImportDTO.getStartDate());
             globalResourceAllocationDTO.setEndDate(resourceAllocationImportDTO.getEndDate());

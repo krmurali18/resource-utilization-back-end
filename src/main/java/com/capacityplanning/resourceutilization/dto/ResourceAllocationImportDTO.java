@@ -15,6 +15,6 @@ public class ResourceAllocationImportDTO {
     private double fte;
     private String shortDescription;
     private String country;
-    private String employementType;
+    private String employmentType;
     private String state;
 }
