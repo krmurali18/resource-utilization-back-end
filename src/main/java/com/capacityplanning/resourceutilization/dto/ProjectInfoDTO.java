@@ -24,6 +24,10 @@ public class ProjectInfoDTO {
 
     private BigDecimal requiredAllocation;
 
+    private String projectManager;
+
+    private String demandManager;
+
     public ProjectInfoDTO() {
 
     }
@@ -39,5 +43,7 @@ public class ProjectInfoDTO {
         this.task = entity.getTask();
         this.status = entity.getStatus();
         this.requiredAllocation = entity.getRequiredAllocation();
+        this.demandManager = entity.getDemandManager();
+        this.projectManager = entity.getProjectManager();
     }
 }

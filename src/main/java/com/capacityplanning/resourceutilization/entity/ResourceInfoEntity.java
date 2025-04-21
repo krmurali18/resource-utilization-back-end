@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "resource_info")
 @Getter
@@ -24,13 +26,13 @@ public class ResourceInfoEntity {
     private String company;
 
     @Column(name = "created_at", nullable = false)
-    private String createdAt;
+    private LocalDateTime createdAt;
 
     @Column(name = "created_by", nullable = false)
     private String createdBy;
 
     @Column(name = "updated_at", nullable = false)
-    private String updatedAt;
+    private LocalDateTime updatedAt;
 
     @Column(name = "updated_by", nullable = false)
     private String updatedBy;

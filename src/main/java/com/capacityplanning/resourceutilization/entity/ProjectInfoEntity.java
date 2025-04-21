@@ -55,4 +55,10 @@ public class ProjectInfoEntity {
     @Column(name = "required_allocation", nullable = false)
     private BigDecimal requiredAllocation;
 
+    @Column(name="project_manager")
+    private String projectManager;
+
+    @Column(name="demand_manager")
+    private String demandManager;
+
 }
