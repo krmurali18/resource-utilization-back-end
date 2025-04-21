@@ -25,4 +25,8 @@ public class ResourceInfoServiceImpl implements ResourceInfoService {
                 .map(ResourceInfoDTO::new)
                 .orElseThrow(() -> new RuntimeException("Resource not found with id: " + id));
     }
+
+    @Override
+    public ResourceInfoDTO saveResource(ResourceInfoDTO resourceInfoDTO) {
+        return new ResourceInfoDTO(resourceInfoRepository.save(resourceInfoDTO.toEntity()));    
 }
