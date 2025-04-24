@@ -1,5 +1,6 @@
 package com.capacityplanning.resourceutilization.controller;
 
+import com.capacityplanning.resourceutilization.dto.NewDemandImportResultDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,13 +37,14 @@ public class DataImportExportController {
 
     @PostMapping(value = "/import-new-demand", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Import new demand for projects", description = "Upload the new demand data for projects")
-    public ResponseEntity<String> importNewDemand(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<List<NewDemandImportResultDTO>> importNewDemand(@RequestParam("file") MultipartFile file) {
         try {
             System.out.println("File name: " + file.getOriginalFilename());
-            dataImportExportService.importNewDemand(file);
-            return ResponseEntity.ok("New demand imported successfully");
+            List<NewDemandImportResultDTO> result = dataImportExportService.importNewDemand(file);
+            return ResponseEntity.ok(result);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to import new demand: " + e.getMessage());
+            List<NewDemandImportResultDTO> errorResponse = List.of(new NewDemandImportResultDTO("Error", "Failed to import new demand: " + e.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
 

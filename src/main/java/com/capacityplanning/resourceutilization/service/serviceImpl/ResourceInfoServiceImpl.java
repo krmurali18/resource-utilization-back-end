@@ -1,11 +1,14 @@
 package com.capacityplanning.resourceutilization.service.serviceImpl;
 
 import com.capacityplanning.resourceutilization.dto.ResourceInfoDTO;
+import com.capacityplanning.resourceutilization.entity.ProjectInfoEntity;
+import com.capacityplanning.resourceutilization.entity.ResourceInfoEntity;
 import com.capacityplanning.resourceutilization.repository.ResourceInfoRepository;
 import com.capacityplanning.resourceutilization.service.ResourceInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,5 +31,14 @@ public class ResourceInfoServiceImpl implements ResourceInfoService {
 
     @Override
     public ResourceInfoDTO saveResource(ResourceInfoDTO resourceInfoDTO) {
-        return new ResourceInfoDTO(resourceInfoRepository.save(resourceInfoDTO.toEntity()));    
+        ResourceInfoEntity resourceInfoEntity = new ResourceInfoEntity();
+        resourceInfoEntity.setResourceName(resourceInfoDTO.getResourceName());
+        resourceInfoEntity.setSkills(resourceInfoDTO.getSkills());
+        resourceInfoEntity.setCompany(resourceInfoDTO.getCompany());
+        resourceInfoEntity.setCreatedBy("System");
+        resourceInfoEntity.setCreatedAt(LocalDateTime.now());
+        resourceInfoEntity.setUpdatedBy("System");
+        resourceInfoEntity.setUpdatedAt(LocalDateTime.now());
+        return new ResourceInfoDTO(resourceInfoRepository.save(resourceInfoEntity));
+    }
 }

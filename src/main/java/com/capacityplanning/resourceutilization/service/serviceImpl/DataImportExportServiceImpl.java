@@ -1,7 +1,5 @@
 package com.capacityplanning.resourceutilization.service.serviceImpl;
-import com.capacityplanning.resourceutilization.dto.GlobalResourceAllocationDTO;
-import com.capacityplanning.resourceutilization.dto.ProjectInfoDTO;
-import com.capacityplanning.resourceutilization.dto.ResourceInfoDTO;
+import com.capacityplanning.resourceutilization.dto.*;
 import com.capacityplanning.resourceutilization.entity.ProjectInfoEntity;
 import com.capacityplanning.resourceutilization.entity.ProjectResourceMappingEntity;
 import com.capacityplanning.resourceutilization.entity.ResourceInfoEntity;
@@ -9,7 +7,6 @@ import com.capacityplanning.resourceutilization.repository.ProjectInfoRepository
 import com.capacityplanning.resourceutilization.repository.ProjectResourceMappingRepository;
 import com.capacityplanning.resourceutilization.repository.ResourceInfoRepository;
 import com.capacityplanning.resourceutilization.service.DataImportExportService;
-import com.capacityplanning.resourceutilization.dto.ResourceAllocationImportDTO;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +22,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.text.SimpleDateFormat;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class DataImportExportServiceImpl implements DataImportExportService{
@@ -252,12 +250,14 @@ public class DataImportExportServiceImpl implements DataImportExportService{
     }
 
     @Override
-    public String importNewDemand(MultipartFile file) throws IOException {
+    public List<NewDemandImportResultDTO> importNewDemand(MultipartFile file) throws IOException {
         Workbook workbook = new XSSFWorkbook(file.getInputStream());
         Sheet sheet = workbook.getSheetAt(0);
         boolean isHeader = true;
         List<ProjectInfoEntity> newDemandList = new ArrayList<>();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        List<NewDemandImportResultDTO> newDemandImportResultDTOList = new ArrayList<>();
+        Map<String, NewDemandImportDataDTO> newDemandImportMap = new HashMap<>();
 
         try {
             for (Row row : sheet) {
@@ -265,44 +265,100 @@ public class DataImportExportServiceImpl implements DataImportExportService{
                     isHeader = false;
                     continue; // Skip the header row
                 }
-
-                ProjectInfoEntity newDemand = new ProjectInfoEntity();
-                newDemand.setRequiredAllocation(BigDecimal.valueOf(row.getCell(1).getNumericCellValue())); 
-                newDemand.setDescription(row.getCell(3).getStringCellValue()); 
-                newDemand.setTask(row.getCell(4).getStringCellValue());
-                newDemand.setDemandManager(row.getCell(6).getStringCellValue()); 
-                newDemand.setProjectManager(row.getCell(8).getStringCellValue()); 
-                newDemand.setGroupName(row.getCell(9).getStringCellValue());                 
-                newDemand.setStatus(row.getCell(10).getStringCellValue()); // Assuming status is in the 5th column
-                
+                NewDemandImportDataDTO newDemandImportDataDTO = new NewDemandImportDataDTO();
+                String requestNumber = row.getCell(2).getStringCellValue();
+                String resourcePlan = row.getCell(5).getStringCellValue();
+                String portfolio = row.getCell(11).getStringCellValue();
+                String task = row.getCell(4).getStringCellValue();
+                String groupName = row.getCell(9).getStringCellValue();
+                BigDecimal fte = BigDecimal.valueOf(row.getCell(1).getNumericCellValue());
+                String description = row.getCell(3).getStringCellValue();
+                String demandManager = row.getCell(6).getStringCellValue();
+                String projectManager = row.getCell(8).getStringCellValue();
+                String status = row.getCell(10).getStringCellValue();
+                //String startDate = row.getCell(12).getStringCellValue();
+                //String endDate = row.getCell(13).getStringCellValue();
                 Cell startDateCell = row.getCell(12); // Assuming start date is in the 6th column
                 if (startDateCell != null && startDateCell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(startDateCell)) {
-                    newDemand.setStartDate(startDateCell.getLocalDateTimeCellValue().toLocalDate());
+                    newDemandImportDataDTO.setStartDate(startDateCell.getLocalDateTimeCellValue().toLocalDate());
                 }
 
                 Cell endDateCell = row.getCell(13); // Assuming end date is in the 7th column
                 if (endDateCell != null && endDateCell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(endDateCell)) {
-                    newDemand.setEndDate(endDateCell.getLocalDateTimeCellValue().toLocalDate());
+                    newDemandImportDataDTO.setEndDate(endDateCell.getLocalDateTimeCellValue().toLocalDate());
                 }
+                String key = task + "," + groupName;
 
-                newDemand.setCreatedBy("System");
-                newDemand.setCreatedAt(LocalDateTime.now());
-                newDemand.setUpdatedBy("System");
-                newDemand.setUpdatedAt(LocalDateTime.now());
-                
+                newDemandImportDataDTO.setShortDescription(description);
+                newDemandImportDataDTO.setTask(task);
+                newDemandImportDataDTO.setResourcePlan(resourcePlan);
+                newDemandImportDataDTO.setDemandManager(demandManager);
+                newDemandImportDataDTO.setProjectManager(projectManager);
+                newDemandImportDataDTO.setGroupName(groupName);
+                newDemandImportDataDTO.setState(status);
+                newDemandImportDataDTO.setPortfolio(portfolio);
 
-                newDemandList.add(newDemand);
+                newDemandImportDataDTO.setFte(BigDecimal.valueOf(fte.doubleValue()));
+                newDemandImportMap.put(key, newDemandImportDataDTO);
             }
 
-            projectInfoRepository.saveAll(newDemandList);
+            AtomicInteger rowNum = new AtomicInteger();
+            newDemandImportMap.forEach((key, newDemandImportDataDTO) -> {
+                NewDemandImportResultDTO newDemandImportResultDTO = new NewDemandImportResultDTO();
+                rowNum.getAndIncrement();
+                newDemandImportResultDTO.setRowNum(rowNum.get());
+                newDemandImportResultDTO.setFte(newDemandImportDataDTO.getFte());
+                newDemandImportResultDTO.setShortDescription(newDemandImportDataDTO.getShortDescription());
+                newDemandImportResultDTO.setTask(newDemandImportDataDTO.getTask());
+                newDemandImportResultDTO.setResourcePlan(newDemandImportDataDTO.getResourcePlan());
+                newDemandImportResultDTO.setDemandManager(newDemandImportDataDTO.getDemandManager());
+                newDemandImportResultDTO.setProjectManager(newDemandImportDataDTO.getProjectManager());
+                newDemandImportResultDTO.setGroupName(newDemandImportDataDTO.getGroupName());
+                newDemandImportResultDTO.setState(newDemandImportDataDTO.getState());
+                newDemandImportResultDTO.setPortfolio(newDemandImportDataDTO.getPortfolio());
+                newDemandImportResultDTO.setStartDate(newDemandImportDataDTO.getStartDate());
+                newDemandImportResultDTO.setEndDate(newDemandImportDataDTO.getEndDate());
+
+                Optional<ProjectInfoEntity> existingProjectInfo = projectInfoRepository.findByGroupNameAndTask(
+                        newDemandImportDataDTO.getGroupName(), newDemandImportDataDTO.getTask());
+
+                if (!existingProjectInfo.isPresent()) {
+                    ProjectInfoEntity newDemand = new ProjectInfoEntity();
+                    newDemand.setRequiredAllocation(newDemandImportDataDTO.getFte());
+                    newDemand.setDescription(newDemandImportDataDTO.getShortDescription());
+                    newDemand.setTask(newDemandImportDataDTO.getTask());
+                    newDemand.setDemandManager(newDemandImportDataDTO.getDemandManager());
+                    newDemand.setProjectManager(newDemandImportDataDTO.getProjectManager());
+                    newDemand.setGroupName(newDemandImportDataDTO.getGroupName());
+                    newDemand.setStatus(newDemandImportDataDTO.getState()); // Assuming status is in the 5th column
+                    newDemand.setStartDate(newDemandImportDataDTO.getStartDate());
+                    newDemand.setEndDate(newDemandImportDataDTO.getEndDate());
+                    newDemand.setCreatedBy("System");
+                    newDemand.setCreatedAt(LocalDateTime.now());
+                    newDemand.setUpdatedBy("System");
+                    newDemand.setUpdatedAt(LocalDateTime.now());
+                    newDemandList.add(newDemand);
+                    projectInfoRepository.save(newDemand);
+                    newDemandImportResultDTO.setImportStatus("Success");
+                    newDemandImportResultDTO.setMessage("Inserted successfully");
+                }  else {
+                    newDemandImportResultDTO.setImportStatus("Failed");
+                    newDemandImportResultDTO.setMessage("Project already exists");
+                }
+                newDemandImportResultDTOList.add(newDemandImportResultDTO);
+            });
+            // if(newDemandList.size > 1) {
+            //     projectInfoRepository.saveAll(newDemandList);
+            // }
         } catch (Exception e) {
             e.printStackTrace();
-            return "Error occurred while importing new demand: " + e.getMessage();
+            //return "Error occurred while importing new demand: " + e.getMessage();
         } finally {
             workbook.close();
         }
 
-        return "New demand imported successfully";
+
+        return newDemandImportResultDTOList;
     }
 
     @Override
