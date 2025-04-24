@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.ZoneId;
 import java.util.*;
 import java.text.SimpleDateFormat;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -36,14 +36,15 @@ public class DataImportExportServiceImpl implements DataImportExportService{
     private ProjectResourceMappingRepository projectResourceMappingRepository;
 
     @Override
-    public String importGlobalResourceAllocation(MultipartFile file) throws IOException {
+    public List<ResourceAllocationImportResultDTO> importGlobalResourceAllocation(MultipartFile file) throws IOException {
         Workbook workbook = new XSSFWorkbook(file.getInputStream());
         Sheet sheet = workbook.getSheetAt(0);
         boolean isHeader = true;
         Map<String, Integer> recordCountMap = new HashMap<>();
-        Map<String, Date[]> dateRangeMap = new HashMap<>();
+        Map<String, LocalDate[]> dateRangeMap = new HashMap<>();
         Map<String, ResourceAllocationImportDTO> resourceInfoMap = new HashMap<>();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        List<ResourceAllocationImportResultDTO> resourceAllocationImportResultDTOList = new ArrayList<ResourceAllocationImportResultDTO>();
         try {
             for (Row row : sheet) {
                 if (isHeader) {
@@ -59,101 +60,73 @@ public class DataImportExportServiceImpl implements DataImportExportService{
                 //System.out.println("key:"+key);
                 recordCountMap.put(key, recordCountMap.getOrDefault(key, 0) + 1);
                 ResourceAllocationImportDTO resourceAllocationImportDTO = new ResourceAllocationImportDTO();
-                Cell startDateCell = row.getCell(0); // Assuming the start date is in the 5th column (index 4)
-                resourceAllocationImportDTO.setProjectManager(row.getCell(3).getStringCellValue()); // Assuming project manager is in the 6th column
-                resourceAllocationImportDTO.setFte(row.getCell(4).getNumericCellValue()); // Assuming FTE is in the 7th column
-                resourceAllocationImportDTO.setShortDescription(row.getCell(5).getStringCellValue()); // Assuming short description is in the 8th column
-                resourceAllocationImportDTO.setCountry(row.getCell(6).getStringCellValue()); // Assuming country is in the 9th column
-                resourceAllocationImportDTO.setEmploymentType(row.getCell(8).getStringCellValue()); // Assuming employment type is in the 10th column
-                resourceAllocationImportDTO.setState(row.getCell(9).getStringCellValue()); // Assuming state is in the 11th column
-                if (startDateCell != null && startDateCell.getCellType() == CellType.NUMERIC) {
-                    if (DateUtil.isCellDateFormatted(startDateCell)) {
-                        Date startDate = startDateCell.getDateCellValue();
-
-                        Date[] dateRange = dateRangeMap.getOrDefault(key, new Date[]{null, null});
-                        if (dateRange[0] == null || startDate.before(dateRange[0])) {
-                            dateRange[0] = startDate; // Update first start date
-                            //String formattedStartDate = dateFormat.format(dateRange[0]) ;
-                            //resourceAllocationImportDTO.setStartDate(formattedStartDate);
-                        }
-                        if (dateRange[1] == null || startDate.after(dateRange[1])) {
-                            dateRange[1] = startDate; // Update last start date
-                            //String formattedEndDate = dateFormat.format(dateRange[1]);
-                            //resourceAllocationImportDTO.setEndDate(formattedEndDate);
-                        }
-                        dateRangeMap.put(key, dateRange);
+                Cell startDateCell = row.getCell(0);
+                resourceAllocationImportDTO.setResourceName(resourceName);
+                resourceAllocationImportDTO.setTask(task);
+                resourceAllocationImportDTO.setGroupName(groupName);
+                resourceAllocationImportDTO.setProjectManager(row.getCell(3).getStringCellValue());
+                resourceAllocationImportDTO.setFte(row.getCell(4).getNumericCellValue());
+                resourceAllocationImportDTO.setShortDescription(row.getCell(5).getStringCellValue());
+                resourceAllocationImportDTO.setCountry(row.getCell(6).getStringCellValue());
+                resourceAllocationImportDTO.setEmploymentType(row.getCell(8).getStringCellValue());
+                resourceAllocationImportDTO.setState(row.getCell(9).getStringCellValue());
+                //&& DateUtil.isCellDateFormatted(startDateCell)
+                if (startDateCell != null && startDateCell.getCellType() == CellType.NUMERIC ) {
+                    LocalDate startDate = startDateCell.getLocalDateTimeCellValue().toLocalDate();
+                    System.out.println("startDate"+startDate);
+                    LocalDate[] dateRange = dateRangeMap.getOrDefault(key, new LocalDate[]{null, null});
+                    if (dateRange[0] == null || startDate.isBefore(dateRange[0])) {
+                        dateRange[0] = startDate; // Update first start date
                     }
+                    if (dateRange[1] == null || startDate.isAfter(dateRange[1])) {
+                        dateRange[1] = startDate; // Update last start date
+                    }
+                    dateRangeMap.put(key, dateRange);
+                }
 
-                    dateRangeMap.forEach((entryKey, dateRange) -> {
-                        if (entryKey.equals(key)) {
-                            resourceAllocationImportDTO.setStartDate(dateFormat.format(dateRange[0]));
-                            resourceAllocationImportDTO.setEndDate(dateFormat.format(dateRange[1]));
-                        }
-                    });
+                dateRangeMap.forEach((entryKey, dateRange) -> {
+                    if (entryKey.equals(key)) {
+                        resourceAllocationImportDTO.setStartDate(dateRange[0]);
+                        resourceAllocationImportDTO.setEndDate(dateRange[1]);
+                    }
+                });
 
                     resourceInfoMap.put(key, resourceAllocationImportDTO);
                 }
-            }
             workbook.close();
-            parseDTO(resourceInfoMap);
+            return parseAndSaveAllocationData(resourceInfoMap);
         } catch (Exception e) {
             e.printStackTrace();
-            return "Error occurred while importing data: " + e.getMessage();
         } finally {
             workbook.close();
         }
 
-        return "File imported successfully";
+        return resourceAllocationImportResultDTOList;
     }
 
-    public void parseDTO(Map<String, ResourceAllocationImportDTO> resourceInfoMap) {
-        // Populate the DTO with data from the entity
-        List<GlobalResourceAllocationDTO> globalResourceAllocationDTOList = new ArrayList<GlobalResourceAllocationDTO>();
+    public List<ResourceAllocationImportResultDTO> parseAndSaveAllocationData(Map<String, ResourceAllocationImportDTO> resourceInfoMap) {
+
+        List<ResourceAllocationImportResultDTO> resourceAllocationImportResultDTOList = new ArrayList<ResourceAllocationImportResultDTO>();
+        AtomicInteger rowNum = new AtomicInteger();
         resourceInfoMap.forEach((key, resourceAllocationImportDTO) -> {
-            GlobalResourceAllocationDTO globalResourceAllocationDTO = new GlobalResourceAllocationDTO();
-            String[] parts = key.split(",");
-            String resourceName = parts[0]!=null ? parts[0] : "N/A";
-            String task = "";
-            if (parts.length > 1 && parts[1] != null && !parts[1].isEmpty()) {
-                task = parts[1];
-            }
-            String groupName = "";
-            if (parts.length > 2 && parts[2] != null && !parts[2].isEmpty()) {
-                groupName = parts[2];
-            }
-            globalResourceAllocationDTO.setResourceName(resourceName);
-            globalResourceAllocationDTO.setTask(task);
-            globalResourceAllocationDTO.setGroupName(groupName);
-            globalResourceAllocationDTO.setFte(resourceAllocationImportDTO.getFte());
-            globalResourceAllocationDTO.setShortDescription(resourceAllocationImportDTO.getShortDescription());
-            globalResourceAllocationDTO.setCountry(resourceAllocationImportDTO.getCountry());
-            globalResourceAllocationDTO.setEmployementType(resourceAllocationImportDTO.getEmploymentType());
-            globalResourceAllocationDTO.setState(resourceAllocationImportDTO.getState());
-            globalResourceAllocationDTO.setStartDate(resourceAllocationImportDTO.getStartDate());
-            globalResourceAllocationDTO.setEndDate(resourceAllocationImportDTO.getEndDate());
-            globalResourceAllocationDTO.setProjectManager(resourceAllocationImportDTO.getProjectManager());
-            globalResourceAllocationDTOList.add(globalResourceAllocationDTO);
-        });
-
-
-        globalResourceAllocationDTOList.forEach(globalResourceAllocationDTO -> {
+            rowNum.getAndIncrement();
             ProjectInfoDTO projectInfoDTO;
             Optional<ProjectInfoEntity> existingProjectInfo = projectInfoRepository.findByGroupNameAndTask(
-                    globalResourceAllocationDTO.getGroupName(), globalResourceAllocationDTO.getTask());
+                    resourceAllocationImportDTO.getGroupName(), resourceAllocationImportDTO.getTask());
             if (!existingProjectInfo.isPresent()) {
                 ProjectInfoEntity newProjectInfo = new ProjectInfoEntity();
-                newProjectInfo.setGroupName(globalResourceAllocationDTO.getGroupName());
-                newProjectInfo.setTask(globalResourceAllocationDTO.getTask());
-                newProjectInfo.setRequiredAllocation(BigDecimal.valueOf(globalResourceAllocationDTO.getFte()));
-                newProjectInfo.setDescription(globalResourceAllocationDTO.getShortDescription());
+                newProjectInfo.setGroupName(resourceAllocationImportDTO.getGroupName());
+                newProjectInfo.setTask(resourceAllocationImportDTO.getTask());
+                newProjectInfo.setRequiredAllocation(BigDecimal.valueOf(resourceAllocationImportDTO.getFte()));
+                newProjectInfo.setDescription(resourceAllocationImportDTO.getShortDescription());
                 //newProjectInfo.setCountry(globalResourceAllocationDTO.getCountry());
                 //newProjectInfo.setEmployementType(globalResourceAllocationDTO.getEmployementType());
-                newProjectInfo.setStatus(globalResourceAllocationDTO.getState());
-                newProjectInfo.setStartDate(LocalDate.parse(globalResourceAllocationDTO.getStartDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-                newProjectInfo.setEndDate(LocalDate.parse(globalResourceAllocationDTO.getEndDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-                newProjectInfo.setCreatedBy("Murali");
+                newProjectInfo.setStatus(resourceAllocationImportDTO.getState());
+                newProjectInfo.setStartDate(resourceAllocationImportDTO.getStartDate());
+                newProjectInfo.setEndDate(resourceAllocationImportDTO.getEndDate());
+                newProjectInfo.setCreatedBy("System");
                 newProjectInfo.setCreatedAt(LocalDateTime.now());
-                newProjectInfo.setUpdatedBy("Murali");
+                newProjectInfo.setUpdatedBy("System");
                 newProjectInfo.setUpdatedAt(LocalDateTime.now());
                 //newProjectInfo.setProjectManager(globalResourceAllocationDTO.getProjectManager());
                 projectInfoDTO = new ProjectInfoDTO(projectInfoRepository.save(newProjectInfo));
@@ -164,15 +137,15 @@ public class DataImportExportServiceImpl implements DataImportExportService{
 
             //Check and create new resource
             ResourceInfoDTO resourceInfoDTO;
-            Optional<ResourceInfoEntity> existingResource = resourceInfoRepository.findByResourceName(globalResourceAllocationDTO.getResourceName());
+            Optional<ResourceInfoEntity> existingResource = resourceInfoRepository.findByResourceName(resourceAllocationImportDTO.getResourceName());
             if (!existingResource.isPresent()) {
                 ResourceInfoEntity newResourceInfo = new ResourceInfoEntity();
-                newResourceInfo.setResourceName(globalResourceAllocationDTO.getResourceName());
+                newResourceInfo.setResourceName(resourceAllocationImportDTO.getResourceName());
                 newResourceInfo.setSkills("");
                 newResourceInfo.setCompany("");
-                newResourceInfo.setCreatedBy("Murali");
+                newResourceInfo.setCreatedBy("System");
                 newResourceInfo.setCreatedAt(LocalDateTime.now());
-                newResourceInfo.setUpdatedBy("Murali");
+                newResourceInfo.setUpdatedBy("System");
                 newResourceInfo.setUpdatedAt(LocalDateTime.now());
                 resourceInfoDTO = new ResourceInfoDTO(resourceInfoRepository.save(newResourceInfo));
             } else {
@@ -181,16 +154,16 @@ public class DataImportExportServiceImpl implements DataImportExportService{
 
             //check and create if the project manager is not present
             ResourceInfoDTO projectManagerResourceInfoDTO;
-            if(globalResourceAllocationDTO.getProjectManager()!=null && !globalResourceAllocationDTO.getProjectManager().isEmpty()){
-                Optional<ResourceInfoEntity> existingResource1 = resourceInfoRepository.findByResourceName(globalResourceAllocationDTO.getProjectManager());
+            if(resourceAllocationImportDTO.getProjectManager()!=null && !resourceAllocationImportDTO.getProjectManager().isEmpty()){
+                Optional<ResourceInfoEntity> existingResource1 = resourceInfoRepository.findByResourceName(resourceAllocationImportDTO.getProjectManager());
                 if (!existingResource1.isPresent()) {
                     ResourceInfoEntity newResourceInfo = new ResourceInfoEntity();
-                    newResourceInfo.setResourceName(globalResourceAllocationDTO.getProjectManager());
+                    newResourceInfo.setResourceName(resourceAllocationImportDTO.getProjectManager());
                     newResourceInfo.setSkills("");
                     newResourceInfo.setCompany("");
-                    newResourceInfo.setCreatedBy("Murali");
+                    newResourceInfo.setCreatedBy("System");
                     newResourceInfo.setCreatedAt(LocalDateTime.now());
-                    newResourceInfo.setUpdatedBy("Murali");
+                    newResourceInfo.setUpdatedBy("System");
                     newResourceInfo.setUpdatedAt(LocalDateTime.now());
                     projectManagerResourceInfoDTO = new ResourceInfoDTO(resourceInfoRepository.save(newResourceInfo));
                 } else {
@@ -201,52 +174,38 @@ public class DataImportExportServiceImpl implements DataImportExportService{
             ProjectResourceMappingEntity projectResourceMappingEntity = new ProjectResourceMappingEntity();
             projectResourceMappingEntity.setResourceId(resourceInfoDTO.getResourceId());
             projectResourceMappingEntity.setProjectId(projectInfoDTO.getProjectId());
-            projectResourceMappingEntity.setStartDate(LocalDate.parse(globalResourceAllocationDTO.getStartDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-            projectResourceMappingEntity.setEndDate(LocalDate.parse(globalResourceAllocationDTO.getEndDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-            projectResourceMappingEntity.setAllocationPercentage(BigDecimal.valueOf(globalResourceAllocationDTO.getFte()));
+            projectResourceMappingEntity.setStartDate(resourceAllocationImportDTO.getStartDate());
+            projectResourceMappingEntity.setEndDate(resourceAllocationImportDTO.getEndDate());
+            projectResourceMappingEntity.setAllocationPercentage(BigDecimal.valueOf(resourceAllocationImportDTO.getFte()));
             projectResourceMappingEntity.setSource("IMPORT");
             projectResourceMappingEntity.setCreatedAt(LocalDateTime.now());
-            projectResourceMappingEntity.setCreatedBy("Murali");
+            projectResourceMappingEntity.setCreatedBy("System");
             projectResourceMappingEntity.setUpdatedAt(LocalDateTime.now());
-            projectResourceMappingEntity.setUpdatedBy("Murali");
-            projectResourceMappingEntity.setComments("Imported from Excel");
+            projectResourceMappingEntity.setUpdatedBy("System");
+            projectResourceMappingEntity.setComments("Imported from Global Resource Allocation Excel");
             projectResourceMappingRepository.save(projectResourceMappingEntity);
 
+
+            ResourceAllocationImportResultDTO resourceAllocationImportResultDTO = new ResourceAllocationImportResultDTO();
+            resourceAllocationImportResultDTO.setRowNum(rowNum.get());
+            resourceAllocationImportResultDTO.setResourceName(resourceAllocationImportDTO.getResourceName());
+            resourceAllocationImportResultDTO.setTask(resourceAllocationImportDTO.getTask());
+            resourceAllocationImportResultDTO.setGroupName(resourceAllocationImportDTO.getGroupName());
+            resourceAllocationImportResultDTO.setFte(resourceAllocationImportDTO.getFte());
+            resourceAllocationImportResultDTO.setShortDescription(resourceAllocationImportDTO.getShortDescription());
+            resourceAllocationImportResultDTO.setCountry(resourceAllocationImportDTO.getCountry());
+            resourceAllocationImportResultDTO.setEmploymentType(resourceAllocationImportDTO.getEmploymentType());
+            resourceAllocationImportResultDTO.setState(resourceAllocationImportDTO.getState());
+            resourceAllocationImportResultDTO.setStartDate(resourceAllocationImportDTO.getStartDate());
+            resourceAllocationImportResultDTO.setEndDate(resourceAllocationImportDTO.getEndDate());
+            resourceAllocationImportResultDTO.setProjectManager(resourceAllocationImportDTO.getProjectManager());
+            resourceAllocationImportResultDTO.setImportStatus("Success");
+            resourceAllocationImportResultDTO.setMessage("Inserted successfully");
+            resourceAllocationImportResultDTOList.add(resourceAllocationImportResultDTO);
         });
-        // save the project info into the database
-        //checkAndCreateResourceInfo(globalResourceAllocationDTOList);
-        //checkAndCreateProjectInfo(globalResourceAllocationDTOList);
 
-        //projectInfoRepository.saveAll(projectInfoList);
-        System.out.println("Global Resource Allocation DTO List: " + globalResourceAllocationDTOList.size() + " records");
-    }
-
-
-    public void checkAndCreateProjectInfo(List<GlobalResourceAllocationDTO> globalResourceAllocationDTOList) {
-        Set<String> uniqueGroupNames = new HashSet<>();
-
-        globalResourceAllocationDTOList.forEach(globalResourceAllocationDTO -> {
-            Optional<ProjectInfoEntity> existingProjectInfo = projectInfoRepository.findByGroupNameAndTask(
-                    globalResourceAllocationDTO.getGroupName(), globalResourceAllocationDTO.getTask());
-            if (!existingProjectInfo.isPresent()) {
-                ProjectInfoEntity newProjectInfo = new ProjectInfoEntity();
-                newProjectInfo.setGroupName(globalResourceAllocationDTO.getGroupName());
-                newProjectInfo.setTask(globalResourceAllocationDTO.getTask());
-                newProjectInfo.setRequiredAllocation(BigDecimal.valueOf(globalResourceAllocationDTO.getFte()));
-                newProjectInfo.setDescription(globalResourceAllocationDTO.getShortDescription());
-                //newProjectInfo.setCountry(globalResourceAllocationDTO.getCountry());
-                //newProjectInfo.setEmployementType(globalResourceAllocationDTO.getEmployementType());
-                newProjectInfo.setStatus(globalResourceAllocationDTO.getState());
-                newProjectInfo.setStartDate(LocalDate.parse(globalResourceAllocationDTO.getStartDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-                newProjectInfo.setEndDate(LocalDate.parse(globalResourceAllocationDTO.getEndDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-                newProjectInfo.setCreatedBy("Murali");
-                newProjectInfo.setCreatedAt(LocalDateTime.now());
-                newProjectInfo.setUpdatedBy("Murali");
-                newProjectInfo.setUpdatedAt(LocalDateTime.now());
-                //newProjectInfo.setProjectManager(globalResourceAllocationDTO.getProjectManager());
-                projectInfoRepository.save(newProjectInfo);
-            }
-        });
+        System.out.println("Global Resource Allocation DTO List: " + resourceAllocationImportResultDTOList.size() + " records");
+        return resourceAllocationImportResultDTOList;
     }
 
     @Override
@@ -279,12 +238,12 @@ public class DataImportExportServiceImpl implements DataImportExportService{
                 //String startDate = row.getCell(12).getStringCellValue();
                 //String endDate = row.getCell(13).getStringCellValue();
                 Cell startDateCell = row.getCell(12); // Assuming start date is in the 6th column
-                if (startDateCell != null && startDateCell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(startDateCell)) {
+                if (startDateCell != null && startDateCell.getCellType() == CellType.NUMERIC) {
                     newDemandImportDataDTO.setStartDate(startDateCell.getLocalDateTimeCellValue().toLocalDate());
                 }
 
                 Cell endDateCell = row.getCell(13); // Assuming end date is in the 7th column
-                if (endDateCell != null && endDateCell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(endDateCell)) {
+                if (endDateCell != null && endDateCell.getCellType() == CellType.NUMERIC) {
                     newDemandImportDataDTO.setEndDate(endDateCell.getLocalDateTimeCellValue().toLocalDate());
                 }
                 String key = task + "," + groupName;

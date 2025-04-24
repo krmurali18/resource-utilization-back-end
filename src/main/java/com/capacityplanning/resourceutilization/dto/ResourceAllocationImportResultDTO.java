@@ -4,15 +4,14 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Getter
 @Setter
-public class ResourceAllocationImportDTO {
-
+public class ResourceAllocationImportResultDTO {
+    private Integer rowNum;
     private String resourceName;
-    private String task;
     private String groupName;
+    private String task;
     private LocalDate startDate;
     private LocalDate endDate;
     private String projectManager;
@@ -21,4 +20,15 @@ public class ResourceAllocationImportDTO {
     private String country;
     private String employmentType;
     private String state;
+    private String importStatus;
+    private String message;
+
+    public ResourceAllocationImportResultDTO() {
+    }
+
+    public ResourceAllocationImportResultDTO(String importStatus, String message) {
+        this.importStatus = importStatus;
+        this.message = message;
+    }
+
 }

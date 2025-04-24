@@ -1,6 +1,7 @@
 package com.capacityplanning.resourceutilization.controller;
 
 import com.capacityplanning.resourceutilization.dto.NewDemandImportResultDTO;
+import com.capacityplanning.resourceutilization.dto.ResourceAllocationImportResultDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,14 +25,15 @@ public class DataImportExportController {
     private DataImportExportService dataImportExportService;
 
     @PostMapping(value = "/import-global-resource-allocation",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Update the Service now Data for the project resource mapping", description = "Upload the project resource mapping data")
-    public ResponseEntity<String> importGlobalResourceAllocation(@RequestParam("file") MultipartFile file) {
+    @Operation(summary = "Insert the Service now Data for the project resource mapping", description = "Upload the project resource mapping data")
+    public ResponseEntity<List<ResourceAllocationImportResultDTO>> importGlobalResourceAllocation(@RequestParam("file") MultipartFile file) {
         try {
             System.out.println("File name: " + file.getOriginalFilename());
-            dataImportExportService.importGlobalResourceAllocation(file);
-            return ResponseEntity.ok("Data imported successfully");
+            List<ResourceAllocationImportResultDTO> result = dataImportExportService.importGlobalResourceAllocation(file);
+            return ResponseEntity.ok(result);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to import data: " + e.getMessage());
+            List<ResourceAllocationImportResultDTO> errorResponse = List.of(new ResourceAllocationImportResultDTO("Error", "Failed to import resource allocation data: " + e.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
 

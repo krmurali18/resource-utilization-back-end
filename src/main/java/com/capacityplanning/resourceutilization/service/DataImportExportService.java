@@ -1,4 +1,5 @@
 package com.capacityplanning.resourceutilization.service;
+import com.capacityplanning.resourceutilization.dto.ResourceAllocationImportResultDTO;
 import com.capacityplanning.resourceutilization.dto.NewDemandImportResultDTO;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -7,7 +8,7 @@ import java.io.IOException;
 import java.util.List;
 
 public interface DataImportExportService {
-    public String importGlobalResourceAllocation(MultipartFile file) throws IOException;
+    public List<ResourceAllocationImportResultDTO>  importGlobalResourceAllocation(MultipartFile file) throws IOException;
     public List<NewDemandImportResultDTO> importNewDemand(MultipartFile file) throws IOException;
     public ByteArrayInputStream exportData() throws IOException;
 }
