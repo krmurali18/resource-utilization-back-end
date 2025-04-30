@@ -35,6 +35,9 @@ public class ProjectResourceMappingEntity {
     @Column(name = "source", nullable = false)
     private String source;
 
+    @Column(name = "status", nullable = false)
+    private String status;
+
     @Column(name = "created_by")
     private String createdBy;
 

@@ -178,6 +178,7 @@ public class DataImportExportServiceImpl implements DataImportExportService{
             projectResourceMappingEntity.setEndDate(resourceAllocationImportDTO.getEndDate());
             projectResourceMappingEntity.setAllocationPercentage(BigDecimal.valueOf(resourceAllocationImportDTO.getFte()));
             projectResourceMappingEntity.setSource("IMPORT");
+            projectResourceMappingEntity.setStatus(resourceAllocationImportDTO.getState());
             projectResourceMappingEntity.setCreatedAt(LocalDateTime.now());
             projectResourceMappingEntity.setCreatedBy("System");
             projectResourceMappingEntity.setUpdatedAt(LocalDateTime.now());

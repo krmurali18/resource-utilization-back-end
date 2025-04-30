@@ -22,4 +22,6 @@ public interface GlobalResourceAllocationService {
     public List<ResourceAvailabilityDTO> getAvailableResources(LocalDate startDate, LocalDate endDate);
 
     public List<ResourceAllocationDetailDTO> getMonthlyResourceAllocation(LocalDate startDate, LocalDate endDate);
+
+    public ResourceAllocationDetailDTO getResourceMonthlyAllocation(String resourceName, LocalDate startDate, LocalDate endDate);
 }

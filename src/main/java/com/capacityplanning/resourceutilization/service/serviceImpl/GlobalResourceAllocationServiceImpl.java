@@ -13,11 +13,13 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -37,7 +39,10 @@ public class GlobalResourceAllocationServiceImpl implements GlobalResourceAlloca
 
     @Override
     public List<ProjectResourceMappingDTO> getGlobalResourceAllocations() {
-        return projectResourceMappingRepository.findAll().stream().map(ProjectResourceMappingDTO::new).collect(Collectors.toList());
+        return projectResourceMappingRepository.findByStatus("Allocated").stream()
+                .map(ProjectResourceMappingDTO::new)
+                .collect(Collectors.toList());
+        //return projectResourceMappingRepository.findAll().stream().map(ProjectResourceMappingDTO::new).collect(Collectors.toList());
     }
 
     @Override
@@ -140,22 +145,19 @@ public class GlobalResourceAllocationServiceImpl implements GlobalResourceAlloca
         List<ResourceInfoEntity> resourceInfoEntities = resourceInfoRepository.findAll();
         startDate.datesUntil(endDate.plusMonths(0), java.time.Period.ofMonths(1)).forEach(date -> {
             String month = date.format(formatter);
-            //System.out.println("Month: " + month);
             List<ResourceAvailabilityDetailDTO> allocatedResourceIds = monthlyResourceAllocations.stream()
                     .filter(resource -> (resource.getYearMonth()).equals(month))
                     .collect(Collectors.toList());
 
             List<ResourceAvailabilityDetailDTO> unallocatedResources = new ArrayList<>();
             resourceInfoEntities.forEach(resource -> {
-                if (allocatedResourceIds.stream().noneMatch(r -> r.getResourceId().equals(resource.getResourceId()))) {
+                if (allocatedResourceIds.stream().noneMatch(r -> r.getResourceId().equals(resource.getResourceId())) || monthlyResourceAllocations.stream().noneMatch(r -> r.getResourceId().equals(resource.getResourceId()))) {
                     ResourceAvailabilityDetailDTO noAllocationResource = new ResourceAvailabilityDetailDTO();
                     noAllocationResource.setYearMonth(month);
                     noAllocationResource.setResourceName(resource.getResourceName());
                     noAllocationResource.setResourceId(resource.getResourceId());
                     noAllocationResource.setTotalAllocation(0.0);
                     unallocatedResources.add(noAllocationResource);
-                    //allocatedResourceIds.add(noAllocationResource);
-                    //System.out.println("Resource ID: " + resource.getId() + " has no allocation for month: " + month);
                 }
             });
 
@@ -202,18 +204,62 @@ public class GlobalResourceAllocationServiceImpl implements GlobalResourceAlloca
                 resourceAllocatedDetailList.add(resourceAllocationDetailDTO);
             });
 
-            resourceAllocatedDetailList.forEach(resource -> {
-                System.out.println("Resource ID: " + resource.getResourceId());
-                System.out.println("Resource Name: " + resource.getResourceName());
-                resource.getAllocationDetailsDTOList().forEach(allocation -> {
-                    System.out.println("Month: " + allocation.getMonth());
-                    System.out.println("Year: " + allocation.getYear());
-                    System.out.println("Total Allocation: " + allocation.getTotalAllocation());
-                });
-            });
+//            resourceAllocatedDetailList.forEach(resource -> {
+//                System.out.println("Resource ID: " + resource.getResourceId());
+//                System.out.println("Resource Name: " + resource.getResourceName());
+//                resource.getAllocationDetailsDTOList().forEach(allocation -> {
+//                    System.out.println("Month: " + allocation.getMonth());
+//                    System.out.println("Year: " + allocation.getYear());
+//                    System.out.println("Total Allocation: " + allocation.getTotalAllocation());
+//                });
+//            });
 
         });
 
         return resourceAllocatedDetailList;
     }
+
+    @Override
+    public ResourceAllocationDetailDTO getResourceMonthlyAllocation(String resourceName, LocalDate startDate, LocalDate endDate) {
+        List<ResourceAvailabilityDetailDTO> monthlyResourceAllocations = projectResourceMappingRepository.findMonthlyResourceAllocationTotalsByResourceName(startDate, endDate,resourceName);
+        Map<String, List<ResourceAvailabilityDetailDTO>> groupedAllocations = monthlyResourceAllocations.stream()
+                .collect(Collectors.groupingBy(ResourceAvailabilityDetailDTO::getYearMonth));
+
+
+        ResourceAllocationDetailDTO resourceAllocationDetailDTO = new ResourceAllocationDetailDTO();
+        if(!monthlyResourceAllocations.isEmpty())
+            resourceAllocationDetailDTO.setResourceId(monthlyResourceAllocations.get(0).getResourceId());
+        resourceAllocationDetailDTO.setResourceName(resourceName);
+        List<AllocationDetailsDTO> allocationDetailsDTOs = monthlyResourceAllocations.stream().map(allocation -> {
+            AllocationDetailsDTO allocationDetailsDTO = new AllocationDetailsDTO();
+            allocationDetailsDTO.setMonth(Month.of(Integer.parseInt(allocation.getYearMonth().substring(5))).name().substring(0, 1).toUpperCase() + Month.of(Integer.parseInt(allocation.getYearMonth().substring(5))).name().substring(1).toLowerCase());
+            allocationDetailsDTO.setYear(allocation.getYearMonth().substring(0, 4));
+            allocationDetailsDTO.setTotalAllocation(allocation.getTotalAllocation());
+            return allocationDetailsDTO;
+        }).collect(Collectors.toList());
+        resourceAllocationDetailDTO.setAllocationDetailsDTOList(allocationDetailsDTOs);
+
+        startDate.datesUntil(endDate.plusMonths(1), java.time.Period.ofMonths(1)).forEach(date -> {
+            String month = date.format(DateTimeFormatter.ofPattern("yyyy-MM"));
+            boolean allocationExists = false;
+            allocationExists = resourceAllocationDetailDTO.getAllocationDetailsDTOList().stream()
+                    .anyMatch(allocation -> allocation.getYear().equals(month.substring(0, 4)) &&
+                            allocation.getMonth().equals(java.time.Month.of(Integer.parseInt(month.substring(5))).name().substring(0, 1).toUpperCase() +
+                                    java.time.Month.of(Integer.parseInt(month.substring(5))).name().substring(1).toLowerCase()));
+
+            if (!allocationExists) {
+
+                AllocationDetailsDTO allocationDetailsDTO = new AllocationDetailsDTO();
+                allocationDetailsDTO.setMonth(java.time.Month.of(Integer.parseInt(month.substring(5))).name().substring(0, 1).toUpperCase() +
+                        java.time.Month.of(Integer.parseInt(month.substring(5))).name().substring(1).toLowerCase());
+                allocationDetailsDTO.setYear(month.substring(0, 4));
+                allocationDetailsDTO.setTotalAllocation(0.0);
+                resourceAllocationDetailDTO.getAllocationDetailsDTOList().add(allocationDetailsDTO);
+            }
+        });
+
+        return resourceAllocationDetailDTO;
+    }
+
 }
+

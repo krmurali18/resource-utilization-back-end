@@ -69,7 +69,7 @@ public class GlobalResourceAllocationController {
     @Operation(summary = "Get available resources", description = "Retrieve a list of resources with allocation percentage less than or equal to 0.5 from today to one year period")
     public ResponseEntity<List<ResourceAvailabilityDTO>> getAvailableResources() {
         LocalDate startDate = LocalDate.now();
-        LocalDate endDate = startDate.plusYears(1);
+        LocalDate endDate = startDate.plusYears(3);
         List<ResourceAvailabilityDTO> availableResources = globalResourceAllocationService.getAvailableResources(startDate, endDate);
         return ResponseEntity.ok(availableResources);
     }
@@ -82,6 +82,16 @@ public class GlobalResourceAllocationController {
         LocalDate end = LocalDate.parse(endDate);
         List<ResourceAllocationDetailDTO> monthlyResourceAllocations = globalResourceAllocationService.getMonthlyResourceAllocation(start, end);
         return ResponseEntity.ok(monthlyResourceAllocations);
+    }
+
+    @GetMapping("/resourceMonthlyAllocation")
+    @Operation(summary = "Get resource monthly allocation", description = "Retrieve the month-wise allocation percentage for a specific resource between two date periods")
+    public ResponseEntity<ResourceAllocationDetailDTO> getResourceMonthlyAllocation(
+            @RequestParam String resourceName, @RequestParam String startDate, @RequestParam String endDate) {
+        LocalDate start = LocalDate.parse(startDate);
+        LocalDate end = LocalDate.parse(endDate);
+        ResourceAllocationDetailDTO resourceMonthlyAllocations = globalResourceAllocationService.getResourceMonthlyAllocation(resourceName, start, end);
+        return ResponseEntity.ok(resourceMonthlyAllocations);
     }
 
 }
