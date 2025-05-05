@@ -73,7 +73,6 @@ public class DataImportExportServiceImpl implements DataImportExportService{
                 //&& DateUtil.isCellDateFormatted(startDateCell)
                 if (startDateCell != null && startDateCell.getCellType() == CellType.NUMERIC ) {
                     LocalDate startDate = startDateCell.getLocalDateTimeCellValue().toLocalDate();
-                    System.out.println("startDate"+startDate);
                     LocalDate[] dateRange = dateRangeMap.getOrDefault(key, new LocalDate[]{null, null});
                     if (dateRange[0] == null || startDate.isBefore(dateRange[0])) {
                         dateRange[0] = startDate; // Update first start date
@@ -172,6 +171,10 @@ public class DataImportExportServiceImpl implements DataImportExportService{
                     projectManagerResourceInfoDTO = new ResourceInfoDTO(existingResource1.get());
                 }
             }
+
+            // Delete all existing ProjectResourceMappingEntity for the given project and resource
+            projectResourceMappingRepository.deleteByProjectIdAndResourceId(
+                projectInfoDTO.getProjectId(), resourceInfoDTO.getResourceId());
 
             ProjectResourceMappingEntity projectResourceMappingEntity = new ProjectResourceMappingEntity();
             projectResourceMappingEntity.setResourceId(resourceInfoDTO.getResourceId());

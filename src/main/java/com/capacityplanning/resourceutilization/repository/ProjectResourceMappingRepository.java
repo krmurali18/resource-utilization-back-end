@@ -88,4 +88,7 @@ public interface ProjectResourceMappingRepository extends JpaRepository<ProjectR
 
     @Query("SELECT prm FROM ProjectResourceMappingEntity prm WHERE prm.status = :status")
     List<ProjectResourceMappingEntity> findByStatus(@Param("status") String status);
+
+    @Query("DELETE FROM ProjectResourceMappingEntity prm WHERE prm.projectId = :projectId AND prm.resourceId = :resourceId")
+    void deleteByProjectIdAndResourceId(@Param("projectId") Long projectId, @Param("resourceId") Long resourceId);
 }
