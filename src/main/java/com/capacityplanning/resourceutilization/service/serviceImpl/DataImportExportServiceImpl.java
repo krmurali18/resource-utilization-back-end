@@ -122,6 +122,8 @@ public class DataImportExportServiceImpl implements DataImportExportService{
                 //newProjectInfo.setCountry(globalResourceAllocationDTO.getCountry());
                 //newProjectInfo.setEmployementType(globalResourceAllocationDTO.getEmployementType());
                 newProjectInfo.setStatus(resourceAllocationImportDTO.getState());
+                newProjectInfo.setProjectManager(resourceAllocationImportDTO.getProjectManager());
+                newProjectInfo.setDemandManager("");
                 newProjectInfo.setStartDate(resourceAllocationImportDTO.getStartDate());
                 newProjectInfo.setEndDate(resourceAllocationImportDTO.getEndDate());
                 newProjectInfo.setCreatedBy("System");

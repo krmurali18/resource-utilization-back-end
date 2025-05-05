@@ -57,7 +57,7 @@ public class GlobalResourceAllocationServiceImpl implements GlobalResourceAlloca
             projectResourceMappingEntity.setUpdatedBy("Murali");
             projectResourceMappingEntity.setSource(projectResourceMappingDTO.getSource());
             projectResourceMappingEntity.setResourceId(projectResourceMappingDTO.getResourceId());
-            projectResourceMappingEntity.setComments("UPDATED");
+            projectResourceMappingEntity.setComments(projectResourceMappingDTO.getComments());
         }
         projectResourceMappingEntity =  projectResourceMappingRepository.save(projectResourceMappingEntity);
 

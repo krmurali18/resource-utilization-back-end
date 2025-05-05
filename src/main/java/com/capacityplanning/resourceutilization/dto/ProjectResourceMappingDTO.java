@@ -63,6 +63,18 @@ public class ProjectResourceMappingDTO {
     /*@JsonProperty("projectResourceAllocation")
     private List<ProjectResourceAllocationEntity> projectResourceAllocationEntity;*/
 
+    @JsonProperty("createdAt")
+    private LocalDateTime createdAt;
+
+    @JsonProperty("createdBy")
+    private String createdBy;
+
+    @JsonProperty("updatedAt")
+    private LocalDateTime updatedAt;
+
+    @JsonProperty("updatedBy")
+    private String updatedBy;
+
 
     public ProjectResourceMappingDTO(){
 
@@ -81,6 +93,10 @@ public class ProjectResourceMappingDTO {
         this.allocationPercentage = projectResourceMappingEntity.getAllocationPercentage();
         this.source = projectResourceMappingEntity.getSource();
         this.comments = projectResourceMappingEntity.getComments();
+        this.createdAt = projectResourceMappingEntity.getCreatedAt();
+        this.createdBy = projectResourceMappingEntity.getCreatedBy();
+        this.updatedAt = projectResourceMappingEntity.getUpdatedAt();
+        this.updatedBy = projectResourceMappingEntity.getUpdatedBy();
         //this.projectResourceAllocationEntity = projectResourceMappingEntity.getProjectResourceAllocationList();
 
     }

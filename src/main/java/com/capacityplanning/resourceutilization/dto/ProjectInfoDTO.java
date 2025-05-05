@@ -6,6 +6,8 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import com.capacityplanning.resourceutilization.entity.ProjectInfoEntity;
 
 @Getter
@@ -17,16 +19,19 @@ public class ProjectInfoDTO {
     private LocalDate endDate;
     private String description;
     private String skill;
-
     private String task;
-
     private String status;
-
     private BigDecimal requiredAllocation;
-
     private String projectManager;
-
     private String demandManager;
+
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
+
+    private String createdBy;
+
+    private String updatedBy;
 
     public ProjectInfoDTO() {
 
@@ -45,5 +50,10 @@ public class ProjectInfoDTO {
         this.requiredAllocation = entity.getRequiredAllocation();
         this.demandManager = entity.getDemandManager();
         this.projectManager = entity.getProjectManager();
+        this.createdAt = entity.getCreatedAt();
+        this.updatedAt = entity.getUpdatedAt();
+        this.createdBy = entity.getCreatedBy();
+        this.updatedBy = entity.getUpdatedBy();
+
     }
 }
