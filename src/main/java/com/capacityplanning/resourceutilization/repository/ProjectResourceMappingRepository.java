@@ -3,14 +3,15 @@ package com.capacityplanning.resourceutilization.repository;
 import com.capacityplanning.resourceutilization.dto.ResourceAvailabilityDetailDTO;
 import com.capacityplanning.resourceutilization.entity.ProjectResourceMappingEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.time.LocalDate;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import com.capacityplanning.resourceutilization.dto.ResourceAvailabilityDTO;
-
 @Repository
 public interface ProjectResourceMappingRepository extends JpaRepository<ProjectResourceMappingEntity, Long> {
     public List<ProjectResourceMappingEntity> findAll();
@@ -89,6 +90,8 @@ public interface ProjectResourceMappingRepository extends JpaRepository<ProjectR
     @Query("SELECT prm FROM ProjectResourceMappingEntity prm WHERE prm.status = :status")
     List<ProjectResourceMappingEntity> findByStatus(@Param("status") String status);
 
+    @Modifying
+    @Transactional
     @Query("DELETE FROM ProjectResourceMappingEntity prm WHERE prm.projectId = :projectId AND prm.resourceId = :resourceId")
     void deleteByProjectIdAndResourceId(@Param("projectId") Integer projectId, @Param("resourceId") Integer resourceId);
 }
