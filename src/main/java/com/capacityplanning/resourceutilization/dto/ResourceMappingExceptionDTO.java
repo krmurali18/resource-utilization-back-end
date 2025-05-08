@@ -12,7 +12,6 @@ public class ResourceMappingExceptionDTO {
     private Integer id;
     private Long mappingId;
     private Integer projectId;
-
     private String groupName;
 
     private String description;

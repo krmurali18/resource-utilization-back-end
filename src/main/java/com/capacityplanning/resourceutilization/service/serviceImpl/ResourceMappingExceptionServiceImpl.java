@@ -9,6 +9,7 @@ import com.capacityplanning.resourceutilization.service.ResourceMappingException
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -45,10 +46,20 @@ public class ResourceMappingExceptionServiceImpl implements ResourceMappingExcep
         mostRecentExceptions.entrySet().removeIf(entry -> {
             ProjectResourceMappingEntity projectResourceMappingEntity = null;
             Long mappingId = entry.getValue().getMappingId();
+            Integer projectId = entry.getValue().getProjectId();
+            Integer resourceId = entry.getValue().getResourceId();
+            LocalDate startDate = entry.getValue().getStartDate();
+            LocalDate endDate = entry.getValue().getEndDate();
 
-            projectResourceMappingEntity = projectResourceMappingRepository.findByMappingId(mappingId);
-            return ((projectResourceMappingEntity != null) &&
-                    (projectResourceMappingEntity.getSource().equals(entry.getValue().getSource())));
+            projectResourceMappingEntity = projectResourceMappingRepository.findByResourceIdAndProjectIdAndStartDateAndEndDate(
+                    resourceId, projectId, startDate, endDate);
+
+
+            //projectResourceMappingEntity = projectResourceMappingRepository.findByMappingId(mappingId);
+            return (((projectResourceMappingEntity != null) &&
+                    ((projectResourceMappingEntity.getSource().equals(entry.getValue().getSource())) ||
+                    (projectResourceMappingEntity.getAllocationPercentage().equals(entry.getValue().getAllocationPercentage()))))
+            );
         });
 
 

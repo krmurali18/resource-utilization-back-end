@@ -75,6 +75,9 @@ public class ProjectResourceMappingDTO {
     @JsonProperty("updatedBy")
     private String updatedBy;
 
+    @JsonProperty("status")
+    private String status;
+
 
     public ProjectResourceMappingDTO(){
 
@@ -97,6 +100,7 @@ public class ProjectResourceMappingDTO {
         this.createdBy = projectResourceMappingEntity.getCreatedBy();
         this.updatedAt = projectResourceMappingEntity.getUpdatedAt();
         this.updatedBy = projectResourceMappingEntity.getUpdatedBy();
+        this.status = projectResourceMappingEntity.getStatus();
         //this.projectResourceAllocationEntity = projectResourceMappingEntity.getProjectResourceAllocationList();
 
     }
@@ -119,6 +123,7 @@ public class ProjectResourceMappingDTO {
         entity.setUpdatedAt(LocalDateTime.now());
         entity.setUpdatedBy("Murali");
         entity.setComments(this.comments);
+        entity.setStatus(this.status);
 
         return entity;
 

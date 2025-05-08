@@ -94,4 +94,7 @@ public interface ProjectResourceMappingRepository extends JpaRepository<ProjectR
     @Transactional
     @Query("DELETE FROM ProjectResourceMappingEntity prm WHERE prm.projectId = :projectId AND prm.resourceId = :resourceId")
     void deleteByProjectIdAndResourceId(@Param("projectId") Integer projectId, @Param("resourceId") Integer resourceId);
+
+    @Query("SELECT prm FROM ProjectResourceMappingEntity prm WHERE prm.resourceId = :resourceId AND prm.projectId = :projectId AND prm.startDate = :startDate AND prm.endDate = :endDate")
+    ProjectResourceMappingEntity findByResourceIdAndProjectIdAndStartDateAndEndDate(@Param("resourceId") Integer resourceId, @Param("projectId") Integer projectId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 }

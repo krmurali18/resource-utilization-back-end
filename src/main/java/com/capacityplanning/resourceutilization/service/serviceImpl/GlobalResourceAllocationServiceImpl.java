@@ -48,18 +48,47 @@ public class GlobalResourceAllocationServiceImpl implements GlobalResourceAlloca
     @Override
     public ProjectResourceMappingEntity updateGlobalResourceAllocation(Long id, ProjectResourceMappingDTO projectResourceMappingDTO) {
 
-        Optional<ProjectResourceMappingEntity> projectResourceMappingEntityOptional = projectResourceMappingRepository.findById(id);
         ProjectResourceMappingEntity projectResourceMappingEntity = null;
-        if (projectResourceMappingEntityOptional.isPresent()) {
-            projectResourceMappingEntity = projectResourceMappingEntityOptional.get();
-            projectResourceMappingEntity.setAllocationPercentage(projectResourceMappingDTO.getAllocationPercentage());
-            projectResourceMappingEntity.setUpdatedAt(LocalDateTime.now());
-            projectResourceMappingEntity.setUpdatedBy("Murali");
-            projectResourceMappingEntity.setSource(projectResourceMappingDTO.getSource());
-            projectResourceMappingEntity.setResourceId(projectResourceMappingDTO.getResourceId());
-            projectResourceMappingEntity.setComments(projectResourceMappingDTO.getComments());
+        if(id!=null) {
+            Optional<ProjectResourceMappingEntity> projectResourceMappingEntityOptional = projectResourceMappingRepository.findById(id);
+            if (projectResourceMappingEntityOptional.isPresent()){
+                projectResourceMappingEntity = projectResourceMappingEntityOptional.get();
+                projectResourceMappingEntity.setAllocationPercentage(projectResourceMappingDTO.getAllocationPercentage());
+                projectResourceMappingEntity.setUpdatedAt(LocalDateTime.now());
+                projectResourceMappingEntity.setUpdatedBy("Murali");
+                projectResourceMappingEntity.setSource(projectResourceMappingDTO.getSource());
+                projectResourceMappingEntity.setResourceId(projectResourceMappingDTO.getResourceId());
+                projectResourceMappingEntity.setComments(projectResourceMappingDTO.getComments());
+            } else if (projectResourceMappingEntityOptional.isEmpty()) {
+                projectResourceMappingEntity = projectResourceMappingRepository.findByResourceIdAndProjectIdAndStartDateAndEndDate(
+                        projectResourceMappingDTO.getResourceId(),
+                        projectResourceMappingDTO.getProjectId(),
+                        projectResourceMappingDTO.getStartDate(),
+                        projectResourceMappingDTO.getEndDate()
+                );
+                if(projectResourceMappingEntity == null) {
+                    projectResourceMappingEntity = new ProjectResourceMappingEntity();
+                    projectResourceMappingEntity.setStartDate(projectResourceMappingDTO.getStartDate());
+                    projectResourceMappingEntity.setEndDate(projectResourceMappingDTO.getEndDate());
+                    projectResourceMappingEntity.setAllocationPercentage(projectResourceMappingDTO.getAllocationPercentage());
+                    projectResourceMappingEntity.setProjectId(projectResourceMappingDTO.getProjectId());
+                    projectResourceMappingEntity.setResourceId(projectResourceMappingDTO.getResourceId());
+                    projectResourceMappingEntity.setSource(projectResourceMappingDTO.getSource());
+                    projectResourceMappingEntity.setStatus("Allocated");
+                    projectResourceMappingEntity.setCreatedAt(LocalDateTime.now());
+                    projectResourceMappingEntity.setCreatedBy("Murali");
+                } else {
+                    projectResourceMappingEntity.setAllocationPercentage(projectResourceMappingDTO.getAllocationPercentage());
+                    projectResourceMappingEntity.setUpdatedAt(LocalDateTime.now());
+                    projectResourceMappingEntity.setUpdatedBy("Murali");
+                    projectResourceMappingEntity.setSource(projectResourceMappingDTO.getSource());
+                    projectResourceMappingEntity.setResourceId(projectResourceMappingDTO.getResourceId());
+                    projectResourceMappingEntity.setComments(projectResourceMappingDTO.getComments());
+                }
+            }
         }
-        projectResourceMappingEntity =  projectResourceMappingRepository.save(projectResourceMappingEntity);
+
+        projectResourceMappingEntity = projectResourceMappingRepository.save(projectResourceMappingEntity);
 
         if (projectResourceMappingEntity != null) {
             // Assuming you have a ResourceMappingExceptionEntity and its repository

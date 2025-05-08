@@ -106,6 +106,8 @@ public class DataImportExportServiceImpl implements DataImportExportService{
     public List<ResourceAllocationImportResultDTO> parseAndSaveAllocationData(Map<String, ResourceAllocationImportDTO> resourceInfoMap) {
 
         List<ResourceAllocationImportResultDTO> resourceAllocationImportResultDTOList = new ArrayList<ResourceAllocationImportResultDTO>();
+        // Delete all records in the ProjectResourceMappingEntity table
+        projectResourceMappingRepository.deleteAll();
         AtomicInteger rowNum = new AtomicInteger();
         resourceInfoMap.forEach((key, resourceAllocationImportDTO) -> {
             rowNum.getAndIncrement();
@@ -173,8 +175,8 @@ public class DataImportExportServiceImpl implements DataImportExportService{
             }
 
             // Delete all existing ProjectResourceMappingEntity for the given project and resource
-            projectResourceMappingRepository.deleteByProjectIdAndResourceId(
-                projectInfoDTO.getProjectId(), resourceInfoDTO.getResourceId());
+//            projectResourceMappingRepository.deleteByProjectIdAndResourceId(
+//                projectInfoDTO.getProjectId(), resourceInfoDTO.getResourceId());
 
             ProjectResourceMappingEntity projectResourceMappingEntity = new ProjectResourceMappingEntity();
             projectResourceMappingEntity.setResourceId(resourceInfoDTO.getResourceId());

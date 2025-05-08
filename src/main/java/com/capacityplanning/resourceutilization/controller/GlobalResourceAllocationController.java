@@ -37,7 +37,6 @@ public class GlobalResourceAllocationController {
     @PutMapping("/updateResourceAllocation/{id}")
     @Operation(summary = "Update a global resource allocation", description = "Update a specific resource allocation by ID")
     public ResponseEntity<ProjectResourceMappingEntity> updateGlobalResourceAllocation(@PathVariable Long id, @RequestBody ProjectResourceMappingDTO projectResourceMappingDTO) {
-        System.out.println("Allocation Percentage"+projectResourceMappingDTO.getAllocationPercentage());
         ProjectResourceMappingEntity projectResourceMappingEntity = globalResourceAllocationService.updateGlobalResourceAllocation(id, projectResourceMappingDTO);
         return ResponseEntity.ok(projectResourceMappingEntity);
 //        boolean isEdited = globalResourceAllocationService.updateGlobalResourceAllocation(id, projectResourceMappingDTO);
