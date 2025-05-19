@@ -39,7 +39,10 @@ public class GlobalResourceAllocationServiceImpl implements GlobalResourceAlloca
 
     @Override
     public List<ProjectResourceMappingDTO> getGlobalResourceAllocations() {
-        return projectResourceMappingRepository.findByStatus("Allocated").stream()
+//        return projectResourceMappingRepository.findByStatus("Allocated").stream()
+//                .map(ProjectResourceMappingDTO::new)
+//                .collect(Collectors.toList());
+        return projectResourceMappingRepository.findAllocatedResourcesWithActiveFlag().stream()
                 .map(ProjectResourceMappingDTO::new)
                 .collect(Collectors.toList());
         //return projectResourceMappingRepository.findAll().stream().map(ProjectResourceMappingDTO::new).collect(Collectors.toList());

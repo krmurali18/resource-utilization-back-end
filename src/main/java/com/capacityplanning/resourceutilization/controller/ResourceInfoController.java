@@ -31,4 +31,9 @@ public class ResourceInfoController {
       return resourceInfoService.getResourceById(id);
     }
 
+    @PutMapping("/updateResource/{id}")
+    @Operation(summary = "Update Resource by ID", description = "Update resource information by its ID")
+    public ResourceInfoDTO updateResourceById(@PathVariable Long id, @RequestBody ResourceInfoDTO resourceInfoDTO) {
+        return resourceInfoService.updateResourceById(id, resourceInfoDTO);
+    }
 }

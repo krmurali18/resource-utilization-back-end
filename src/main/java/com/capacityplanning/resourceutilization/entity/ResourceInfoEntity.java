@@ -25,6 +25,21 @@ public class ResourceInfoEntity {
     @Column(name="company")
     private String company;
 
+    @Column(name="country")
+    private String country;
+
+    @Column(name="employee_type")
+    private String employeeType;
+
+    @Column(name="status")
+    private String status;
+
+    @Column(name="active")
+    private Boolean active;
+
+    @Column(name="super_user")
+    private Boolean superUser;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 

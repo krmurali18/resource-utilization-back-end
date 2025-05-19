@@ -41,4 +41,18 @@ public class ResourceInfoServiceImpl implements ResourceInfoService {
         resourceInfoEntity.setUpdatedAt(LocalDateTime.now());
         return new ResourceInfoDTO(resourceInfoRepository.save(resourceInfoEntity));
     }
+
+    @Override
+    public ResourceInfoDTO updateResourceById(Long resourceId, ResourceInfoDTO resourceInfoDTO) {
+        ResourceInfoEntity resourceInfoEntity = resourceInfoRepository.findById(resourceId)
+                .orElseThrow(() -> new RuntimeException("Resource not found with id: " + resourceId));
+        //resourceInfoEntity.setResourceName(resourceInfoDTO.getResourceName());
+        //resourceInfoEntity.setSkills(resourceInfoDTO.getSkills());
+        //resourceInfoEntity.setCountry(resourceInfoDTO.getCompany());
+        //resourceInfoEntity.setEmployeeType(resourceInfoDTO.getEmployeeType());
+        resourceInfoEntity.setUpdatedBy("Murali");
+        resourceInfoEntity.setUpdatedAt(LocalDateTime.now());
+        resourceInfoEntity.setActive(resourceInfoDTO.isActive());
+        return new ResourceInfoDTO(resourceInfoRepository.save(resourceInfoEntity));
+    }
 }

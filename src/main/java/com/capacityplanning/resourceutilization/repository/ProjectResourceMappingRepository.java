@@ -16,13 +16,6 @@ import com.capacityplanning.resourceutilization.dto.ResourceAvailabilityDTO;
 public interface ProjectResourceMappingRepository extends JpaRepository<ProjectResourceMappingEntity, Long> {
     public List<ProjectResourceMappingEntity> findAll();
 
-//    @Query("SELECT new com.capacityplanning.resourceutilization.dto.ResourceAvailabilityDTO(prm.resourceId, ri.resourceName, :startDate, :endDate, sum(prm.allocationPercentage)/count(prm.resourceId), " +
-//            "(1 - sum(prm.allocationPercentage))/count(prm.resourceId)) " +
-//            "FROM ProjectResourceMappingEntity prm " +
-//            "JOIN ResourceInfoEntity ri ON prm.resourceId = ri.Id " +
-//            "WHERE prm.startDate <= :endDate AND prm.endDate >= :startDate  and prm.status='Allocated' " +
-//            "GROUP BY prm.resourceId " +
-//            "HAVING sum(prm.allocationPercentage) <= 0.5")
     @Query("SELECT new com.capacityplanning.resourceutilization.dto.ResourceAvailabilityDTO(prm.resourceId, ri.resourceName, :startDate, :endDate, sum(prm.allocationPercentage), " +
             "(1 - sum(prm.allocationPercentage))) " +
             "FROM ProjectResourceMappingEntity prm " +
@@ -89,6 +82,11 @@ public interface ProjectResourceMappingRepository extends JpaRepository<ProjectR
 
     @Query("SELECT prm FROM ProjectResourceMappingEntity prm WHERE prm.status = :status")
     List<ProjectResourceMappingEntity> findByStatus(@Param("status") String status);
+
+    @Query("SELECT prm FROM ProjectResourceMappingEntity prm " +
+            "JOIN ResourceInfoEntity ri ON prm.resourceId = ri.resourceId " +
+            "WHERE prm.status = 'Allocated' AND ri.active = true")
+    List<ProjectResourceMappingEntity> findAllocatedResourcesWithActiveFlag();
 
     @Modifying
     @Transactional
