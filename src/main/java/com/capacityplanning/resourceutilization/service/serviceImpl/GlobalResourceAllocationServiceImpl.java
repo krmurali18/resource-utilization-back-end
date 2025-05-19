@@ -160,7 +160,6 @@ public class GlobalResourceAllocationServiceImpl implements GlobalResourceAlloca
         ResourceInfoDTO resourceInfoDTO = new ResourceInfoDTO();
         resourceInfoDTO.setResourceId(resourceInfoEntity.getResourceId());
         resourceInfoDTO.setResourceName(resourceInfoEntity.getResourceName());
-        resourceInfoDTO.setSkills(resourceInfoEntity.getSkills());
         return resourceInfoDTO;
     }
 

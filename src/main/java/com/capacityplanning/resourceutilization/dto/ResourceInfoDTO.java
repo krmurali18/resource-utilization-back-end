@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 public class ResourceInfoDTO {
     private Integer resourceId;
     private String resourceName;
-    private String skills;
     private String company;
 
     private String country;
@@ -37,7 +36,6 @@ public class ResourceInfoDTO {
     public ResourceInfoDTO(ResourceInfoEntity resourceInfoEntity) {
         this.resourceId = resourceInfoEntity.getResourceId();
         this.resourceName = resourceInfoEntity.getResourceName();
-        this.skills = resourceInfoEntity.getSkills();
         this.company = resourceInfoEntity.getCompany();
         this.country = resourceInfoEntity.getCountry();
         this.employeeType = resourceInfoEntity.getEmployeeType();

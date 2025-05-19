@@ -33,7 +33,6 @@ public class ResourceInfoServiceImpl implements ResourceInfoService {
     public ResourceInfoDTO saveResource(ResourceInfoDTO resourceInfoDTO) {
         ResourceInfoEntity resourceInfoEntity = new ResourceInfoEntity();
         resourceInfoEntity.setResourceName(resourceInfoDTO.getResourceName());
-        resourceInfoEntity.setSkills(resourceInfoDTO.getSkills());
         resourceInfoEntity.setCompany(resourceInfoDTO.getCompany());
         resourceInfoEntity.setCreatedBy("System");
         resourceInfoEntity.setCreatedAt(LocalDateTime.now());

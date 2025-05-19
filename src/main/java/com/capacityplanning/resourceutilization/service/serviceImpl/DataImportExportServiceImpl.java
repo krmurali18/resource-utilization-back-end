@@ -144,7 +144,6 @@ public class DataImportExportServiceImpl implements DataImportExportService{
             if (!existingResource.isPresent()) {
                 ResourceInfoEntity newResourceInfo = new ResourceInfoEntity();
                 newResourceInfo.setResourceName(resourceAllocationImportDTO.getResourceName());
-                newResourceInfo.setSkills("");
                 newResourceInfo.setCompany("");
                 newResourceInfo.setCreatedBy("System");
                 newResourceInfo.setCreatedAt(LocalDateTime.now());
@@ -162,7 +161,6 @@ public class DataImportExportServiceImpl implements DataImportExportService{
                 if (!existingResource1.isPresent()) {
                     ResourceInfoEntity newResourceInfo = new ResourceInfoEntity();
                     newResourceInfo.setResourceName(resourceAllocationImportDTO.getProjectManager());
-                    newResourceInfo.setSkills("");
                     newResourceInfo.setCompany("");
                     newResourceInfo.setCreatedBy("System");
                     newResourceInfo.setCreatedAt(LocalDateTime.now());
