@@ -22,9 +22,6 @@ public class ProjectInfoEntity {
     @Column(name = "group_name", nullable = false)
     private String groupName;
 
-    @Column(name="skill")
-    private String skill;
-
     @Column(name="start_date", nullable = false)
     private LocalDate startDate;
 

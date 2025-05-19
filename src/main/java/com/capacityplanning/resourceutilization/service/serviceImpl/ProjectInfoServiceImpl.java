@@ -27,7 +27,6 @@ public class ProjectInfoServiceImpl implements ProjectInfoService {
         ProjectInfoEntity projectInfoEntity = new ProjectInfoEntity();
         projectInfoEntity.setGroupName(projectInfoDTO.getGroupName());
         projectInfoEntity.setTask(projectInfoDTO.getTask());
-        projectInfoEntity.setSkill(projectInfoDTO.getSkill());
         projectInfoEntity.setStartDate(projectInfoDTO.getStartDate());
         projectInfoEntity.setEndDate(projectInfoDTO.getEndDate());
         projectInfoEntity.setDescription(projectInfoDTO.getDescription());
@@ -43,7 +42,6 @@ public class ProjectInfoServiceImpl implements ProjectInfoService {
         ProjectInfoEntity projectInfoEntity = projectInfoRepository.findById(id).get();
         projectInfoEntity.setGroupName(projectInfoDTO.getGroupName());
         projectInfoEntity.setTask(projectInfoDTO.getTask());
-        projectInfoEntity.setSkill(projectInfoDTO.getSkill());
         projectInfoEntity.setStartDate(projectInfoDTO.getStartDate());
         projectInfoEntity.setEndDate(projectInfoDTO.getEndDate());
         projectInfoEntity.setDescription(projectInfoDTO.getDescription());
@@ -63,7 +61,6 @@ public class ProjectInfoServiceImpl implements ProjectInfoService {
         System.out.println("Group Name: " + projectInfoEntity.getGroupName());
         projectInfoEntity.setGroupName(projectInfoEntity.getGroupName());
         projectInfoEntity.setTask(projectInfoEntity.getTask());
-        projectInfoEntity.setSkill(projectInfoEntity.getSkill());
         projectInfoEntity.setStartDate(projectInfoEntity.getStartDate());
         projectInfoEntity.setEndDate(projectInfoEntity.getEndDate());
         projectInfoEntity.setDescription(projectInfoEntity.getDescription());

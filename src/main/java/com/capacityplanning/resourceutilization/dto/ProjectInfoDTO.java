@@ -18,7 +18,7 @@ public class ProjectInfoDTO {
     private LocalDate startDate;
     private LocalDate endDate;
     private String description;
-    private String skill;
+
     private String task;
     private String status;
     private BigDecimal requiredAllocation;
@@ -41,7 +41,6 @@ public class ProjectInfoDTO {
     public ProjectInfoDTO(ProjectInfoEntity entity) {
         this.projectId = entity.getProjectId();
         this.groupName = entity.getGroupName();
-        this.skill = entity.getSkill();
         this.startDate = entity.getStartDate();
         this.endDate = entity.getEndDate();
         this.description = entity.getDescription();
